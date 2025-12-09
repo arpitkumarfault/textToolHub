@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Image Assets Directory
 
-## Getting Started
+## Directory Structure
 
-First, run the development server:
+- `tools/` - Tool-specific images (screenshots, icons)
+- `blog/` - Blog post featured images
+- `logo/` - Brand assets (logo variations)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Image Guidelines
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Tool Images
+- Format: WebP (with PNG/JPG fallback)
+- Recommended size: 800x600px
+- Name format: `tool-name-screenshot.webp`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Blog Images
+- Format: WebP (with PNG/JPG fallback)
+- Recommended size: 1200x675px (16:9 ratio)
+- Name format: `blog-post-slug.webp`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Logo Files
+- `logo.svg` - Primary logo (scalable)
+- `logo.png` - PNG version (1000x1000px)
+- `logo-white.svg` - White version for dark backgrounds
+- `favicon.ico` - Browser favicon (32x32px)
 
-## Learn More
+## Optimization
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All images should be optimized before upload:
+- Use tools like TinyPNG, ImageOptim, or Squoosh
+- Target file size: < 200KB for tool images, < 300KB for blog images
+- Always provide alt text in the code
