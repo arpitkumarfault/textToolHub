@@ -31,18 +31,17 @@ const BlogPage = () => {
         <AdBanner slot="homepageTop" format="horizontal" />
 
         {/* Featured Posts */}
-        {featuredPosts.length > 0 && (
-          <section className="mb-16">
-            <h2 className="mb-6 text-2xl font-bold text-text-primary">
-              Featured Articles
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {featuredPosts.map((post) => (
-                <BlogCard key={post.slug} post={post} />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* All Posts Grid (Showing {blogPosts.length} articles) */}
+        <section className="mb-16">
+          <h2 className="mb-6 text-2xl font-bold text-text-primary">
+            All Articles ({blogPosts.length})
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {blogPosts.map((post) => (
+              <BlogCard key={post.slug} post={post} />
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

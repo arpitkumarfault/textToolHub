@@ -55,7 +55,7 @@ const TextToSpeechPage = () => {
         <>
             <StructuredData data={structuredData} />
 
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-background">
                 <div className="container mx-auto px-4 py-8">
                     <Breadcrumb items={breadcrumbItems} />
 
@@ -63,10 +63,10 @@ const TextToSpeechPage = () => {
                         {/* Main Content */}
                         <div className="lg:col-span-8">
                             <div className="mb-8">
-                                <h1 className="mb-4 text-4xl font-bold text-gray-900">
+                                <h1 className="mb-4 text-4xl font-bold text-text-primary">
                                     Free Text to Speech Converter
                                 </h1>
-                                <p className="text-xl text-gray-600">
+                                <p className="text-xl text-text-secondary">
                                     Convert any text to natural-sounding speech instantly. Use multiple
                                     voices and languages right in your browser. Perfect for
                                     accessibility, learning, and content consumption.
@@ -85,7 +85,7 @@ const TextToSpeechPage = () => {
 
                             {/* Features */}
                             <section id="features" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                                <h2 className="mb-6 text-3xl font-bold text-text-primary">
                                     Key Features
                                 </h2>
                                 <div className="grid gap-6 md:grid-cols-2">
@@ -124,7 +124,7 @@ const TextToSpeechPage = () => {
 
                             {/* How to Use */}
                             <section id="how-to-use" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                                <h2 className="mb-6 text-3xl font-bold text-text-primary">
                                     How to Use
                                 </h2>
                                 <div className="space-y-4">
@@ -153,10 +153,10 @@ const TextToSpeechPage = () => {
 
                             {/* Benefits */}
                             <section id="benefits" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                                <h2 className="mb-6 text-3xl font-bold text-text-primary">
                                     Benefits
                                 </h2>
-                                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+                                <div className="space-y-4 rounded-lg border border-border bg-surface p-6">
                                     <BenefitItem
                                         title="Accessibility"
                                         description="Help visually impaired users or those with reading difficulties access written content."
@@ -182,7 +182,7 @@ const TextToSpeechPage = () => {
 
                             {/* FAQ */}
                             <section id="faq" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                                <h2 className="mb-6 text-3xl font-bold text-text-primary">
                                     Frequently Asked Questions
                                 </h2>
                                 <div className="space-y-4">
@@ -215,7 +215,7 @@ const TextToSpeechPage = () => {
 
                             {/* Related Tools */}
                             <section className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                                <h2 className="mb-6 text-3xl font-bold text-text-primary">
                                     Related Tools
                                 </h2>
                                 <div className="grid gap-4 md:grid-cols-3">
@@ -250,10 +250,10 @@ const FeatureBox = ({
     title: string;
     description: string;
 }) => (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition hover:shadow-lg">
+    <div className="rounded-lg border border-border bg-surface p-6 transition hover:shadow-lg">
         <div className="mb-2 text-3xl">{icon}</div>
-        <h3 className="mb-2 text-xl font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
+        <h3 className="mb-2 text-xl font-semibold text-text-primary">{title}</h3>
+        <p className="text-text-secondary">{description}</p>
     </div>
 );
 
@@ -266,13 +266,13 @@ const StepCard = ({
     title: string;
     description: string;
 }) => (
-    <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+    <div className="flex gap-4 rounded-lg border border-border bg-surface p-4">
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary font-bold text-white">
             {number}
         </div>
         <div>
-            <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-            <p className="text-gray-600">{description}</p>
+            <h3 className="mb-1 font-semibold text-text-primary">{title}</h3>
+            <p className="text-text-secondary">{description}</p>
         </div>
     </div>
 );
@@ -284,9 +284,9 @@ const BenefitItem = ({
     title: string;
     description: string;
 }) => (
-    <div className="border-l-4 border-blue-600 pl-4">
-        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
+    <div className="border-l-4 border-primary pl-4">
+        <h3 className="mb-1 font-semibold text-text-primary">{title}</h3>
+        <p className="text-text-secondary">{description}</p>
     </div>
 );
 
@@ -297,21 +297,21 @@ const FAQItem = ({
     question: string;
     answer: string;
 }) => (
-    <details className="group rounded-lg border border-gray-200 bg-white p-4">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
+    <details className="group rounded-lg border border-border bg-surface p-4">
+        <summary className="flex cursor-pointer items-center justify-between font-semibold text-text-primary list-none">
             {question}
             <span className="transition group-open:rotate-180">▼</span>
         </summary>
-        <p className="mt-3 text-gray-600">{answer}</p>
+        <p className="mt-3 text-text-secondary">{answer}</p>
     </details>
 );
 
 const RelatedToolCard = ({ title, href }: { title: string; href: string }) => (
     <a
         href={href}
-        className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-600 hover:shadow-md"
+        className="block rounded-lg border border-border bg-surface p-4 transition hover:border-primary hover:shadow-md"
     >
-        <h3 className="font-semibold text-gray-900">{title}</h3>
+        <h3 className="font-semibold text-text-primary">{title}</h3>
     </a>
 );
 

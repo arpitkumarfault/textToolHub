@@ -15,14 +15,14 @@ const ToolsPage = () => {
   const categories = Array.from(new Set(tools.map((tool) => tool.category)));
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-linear-to-b from-blue-50 to-white py-16">
+    <div className="min-h-screen bg-background">
+      <div className="bg-gradient-to-b from-surface to-background py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl">
+            <h1 className="mb-4 text-4xl font-bold text-text-primary md:text-5xl">
               Free Online Text Tools
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-text-secondary">
               Professional text editing and analysis tools. All free, no
               registration required.
             </p>
@@ -41,7 +41,7 @@ const ToolsPage = () => {
 
             return (
               <section key={category} className="mb-16">
-                <h2 className="mb-6 text-2xl font-bold text-gray-900">
+                <h2 className="mb-6 text-2xl font-bold text-text-primary">
                   {category} Tools
                 </h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

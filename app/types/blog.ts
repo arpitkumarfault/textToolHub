@@ -26,13 +26,18 @@ export interface Author {
   };
 }
 
-export type BlogCategory = 
+export type BlogCategory =
   | "Writing Tips"
   | "Grammar Guide"
   | "SEO Writing"
   | "Content Creation"
   | "Productivity"
-  | "Tools & Resources";
+  | "Tools & Resources"
+  | "Privacy & Security"
+  | "Technical Guide"
+  | "Coding"
+  | "Design"
+  | "Development";
 
 export interface BlogFilter {
   category?: BlogCategory;

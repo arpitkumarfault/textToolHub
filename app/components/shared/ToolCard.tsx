@@ -23,48 +23,45 @@ const ToolCard = ({ tool, index = 0 }: ToolCardProps) => {
         href={`/tools/${tool.slug}`}
         className="group block h-full"
       >
-        <div className="glass-card h-full overflow-hidden relative flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 p-6">
-          {/* Icon with gradient background */}
-          <div className="relative mb-4 flex-shrink-0">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-secondary to-accent text-2xl shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3">
-              {tool.icon || "🔧"}
-            </div>
+        <div className="h-full rounded-xl border border-border bg-surface p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-lg flex flex-col relative overflow-hidden">
+
+          {/* Header: Icon & Category */}
+          {/* Header components (Category & Popular) - No Icon */}
+          <div className="flex items-center justify-between mb-4">
+            {tool.category ? (
+              <span className="text-xs font-semibold px-2 py-1 rounded bg-secondary/10 text-secondary uppercase tracking-wider border border-secondary/20">
+                {tool.category}
+              </span>
+            ) : <div />}
+
             {tool.featured && (
-              <div className="absolute -top-2 -right-2 transform translate-x-2 -translate-y-2">
-                <Badge variant="warning" className="shadow-md">
-                  <HiStar className="mr-1 h-3 w-3" />
-                  Popular
-                </Badge>
+              <div className="flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-full border border-amber-200 dark:border-amber-800">
+                <HiStar className="h-3 w-3" />
+                <span>Popular</span>
               </div>
             )}
           </div>
 
-          {/* Content */}
-          <h3 className="mb-2 text-xl font-bold text-text-primary group-hover:gradient-text transition-all line-clamp-1">
-            {tool.title}
+          {/* Title - Highlighter Style */}
+          <h3 className="mb-3 text-2xl font-black text-text-primary leading-tight group-hover:text-primary transition-colors">
+            {/* Simple highlight effect on hover */}
+            <span className="decoration-primary/30 underline-offset-4 group-hover:underline">
+              {tool.title}
+            </span>
           </h3>
 
-          <p className="mb-4 text-sm text-text-secondary line-clamp-3 min-h-[4.5rem] flex-grow">
+          {/* Description */}
+          <p className="mb-6 text-sm text-text-secondary line-clamp-3 leading-relaxed flex-grow">
             {tool.description}
           </p>
 
-          {/* Category Badge */}
-          {tool.category && (
-            <div className="mb-4">
-              <Badge variant="primary">
-                {tool.category}
-              </Badge>
-            </div>
-          )}
-
-          {/* CTA */}
-          <div className="flex items-center text-primary font-medium group-hover:gap-2 transition-all mt-auto">
-            <span>Use Tool</span>
-            <HiArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          {/* Footer: Action */}
+          <div className="flex items-center text-primary font-bold mt-auto pt-4 border-t border-border/40">
+            <span className="flex items-center gap-2 group-hover:gap-3 transition-all">
+              Open Tool <HiArrowRight className="h-4 w-4" />
+            </span>
           </div>
 
-          {/* Hover Gradient Border Effect */}
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary via-secondary to-accent opacity-0 group-hover:opacity-10 transition-opacity -z-10 blur-xl pointer-events-none" />
         </div>
       </Link>
     </motion.div>
