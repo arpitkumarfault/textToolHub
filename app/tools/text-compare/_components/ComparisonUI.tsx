@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button, Textarea } from "../../../components/ui";
 
 type DiffSegment = {
@@ -32,8 +32,8 @@ const buildWordDiff = (leftText: string, rightText: string) => {
 
   if (a.length === 0 && b.length === 0) {
     return {
-      left: [{ text: "", type: "same" as const }],
-      right: [{ text: "", type: "same" as const }],
+      left: [{ text: "", type: "same" }],
+      right: [{ text: "", type: "same" }],
     };
   }
 
@@ -52,7 +52,7 @@ const buildWordDiff = (leftText: string, rightText: string) => {
   const leftSegments: DiffSegment[] = [];
   const rightSegments: DiffSegment[] = [];
 
-  const backtrack = (i: number, j: number) => {
+  const backtrack = (i: number, j: number): void => {
     if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
       backtrack(i - 1, j - 1);
       mergeSegment(leftSegments, { text: a[i - 1], type: "same" });
@@ -82,7 +82,16 @@ const ComparisonUI = () => {
   const [text2, setText2] = useState("");
   const [diffLines, setDiffLines] = useState<DiffLine[]>([]);
 
-  const handleCompare = () => {
+  // Auto-recalculate diff whenever text1 or text2 changes (optional – you can keep button too)
+  useEffect(() => {
+    if (text1 || text2) {
+      handleCompare();
+    } else {
+      setDiffLines([]);
+    }
+  }, [text1, text2]);
+
+  const handleCompare = useCallback(() => {
     const leftLines = text1.split("\n");
     const rightLines = text2.split("\n");
     const maxLines = Math.max(leftLines.length, rightLines.length);
@@ -103,7 +112,7 @@ const ComparisonUI = () => {
     }
 
     setDiffLines(result);
-  };
+  }, [text1, text2]);
 
   const handleClear = () => {
     setText1("");
@@ -111,9 +120,11 @@ const ComparisonUI = () => {
     setDiffLines([]);
   };
 
+  // FIXED SWAP FUNCTIONALITY
   const handleSwap = () => {
     setText1(text2);
     setText2(text1);
+    // No need to manually trigger compare – useEffect will do it automatically
   };
 
   const renderSegments = (segments: DiffSegment[]) =>
@@ -123,7 +134,7 @@ const ComparisonUI = () => {
       if (segment.type === "added") {
         return (
           <span
-            key={`${segment.text}-${idx}`}
+            key={idx}
             className={`${base} bg-emerald-500/20 text-emerald-700 dark:text-emerald-300`}
           >
             {segment.text || "\u00A0"}
@@ -134,7 +145,7 @@ const ComparisonUI = () => {
       if (segment.type === "removed") {
         return (
           <span
-            key={`${segment.text}-${idx}`}
+            key={idx}
             className={`${base} bg-rose-500/20 text-rose-700 dark:text-rose-300`}
           >
             {segment.text || "\u00A0"}
@@ -143,103 +154,105 @@ const ComparisonUI = () => {
       }
 
       return (
-        <span
-          key={`${segment.text}-${idx}`}
-          className={`${base} text-secondary`}
-        >
+        <span key={idx} className="text-secondary">
           {segment.text || "\u00A0"}
         </span>
       );
     });
 
   const differingLineCount = diffLines.filter((line) => line.hasDifference).length;
+  const hasContent = text1.trim() || text2.trim();
 
   return (
-    <div className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm transition-colors">
+    <div className="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-sm">
       <div className="grid gap-6 md:grid-cols-2">
         <div>
-          <label className="mb-2 block font-semibold text-primary">Text 1</label>
+          <label className="mb-2 block font-semibold text-primary">Text 1 (Original)</label>
           <Textarea
             value={text1}
             onChange={(e) => setText1(e.target.value)}
-            className="min-h-[240px]"
+            className="min-h-[280px] font-mono text-sm"
             placeholder="Paste or type the first text..."
           />
         </div>
         <div>
-          <label className="mb-2 block font-semibold text-primary">Text 2</label>
+          <label className="mb-2 block font-semibold text-primary">Text 2 (Modified)</label>
           <Textarea
             value={text2}
             onChange={(e) => setText2(e.target.value)}
-            className="min-h-[240px]"
+            className="min-h-[280px] font-mono text-sm"
             placeholder="Paste or type the second text..."
           />
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Button onClick={handleCompare} variant="primary" disabled={!text1 && !text2}>
-          Highlight differences
+        <Button onClick={handleCompare} variant="primary" disabled={!hasContent}>
+          Highlight Differences
         </Button>
-        <Button onClick={handleSwap} variant="secondary" disabled={!text1 && !text2}>
-          Swap texts
+        <Button onClick={handleSwap} variant="secondary" disabled={!hasContent}>
+          ↔ Swap Texts
         </Button>
-        <Button onClick={handleClear} variant="outline" disabled={!text1 && !text2}>
-          Clear
+        <Button onClick={handleClear} variant="outline">
+          Clear All
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 text-xs text-secondary">
-        <span className="rounded bg-emerald-500/20 px-2 py-1 text-emerald-700 dark:text-emerald-300">
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-4 text-sm">
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-4 w-8 rounded bg-emerald-500/20"></span>
           Added
         </span>
-        <span className="rounded bg-rose-500/20 px-2 py-1 text-rose-700 dark:text-rose-300">
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-4 w-8 rounded bg-rose-500/20"></span>
           Removed
         </span>
-        <span className="rounded bg-surface-hover px-2 py-1">
-          Unchanged
-        </span>
         {diffLines.length > 0 && (
-          <span className="text-sm font-semibold text-primary">
-            {differingLineCount} of {diffLines.length} line(s) differ
+          <span className="ml-auto font-semibold text-primary">
+            {differingLineCount} / {diffLines.length} line{differingLineCount !== 1 ? "s" : ""} changed
           </span>
         )}
       </div>
 
+      {/* Diff Result */}
       {diffLines.length > 0 && (
-        <div className="space-y-3 rounded-lg border border-border bg-surface-hover/50 p-4">
-          <h3 className="text-lg font-semibold text-primary">Highlighted differences</h3>
-          <div className="space-y-4">
-            {diffLines.map((line) => (
-              <div
-                key={line.lineNumber}
-                className="grid gap-3 rounded-lg border border-border bg-surface p-3 shadow-sm sm:grid-cols-2"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs uppercase tracking-wide text-secondary">
-                    <span>Line {line.lineNumber}</span>
-                    <span className={line.hasDifference ? "text-rose-600 dark:text-rose-300" : ""}>
-                      Text 1
-                    </span>
+        <div className="overflow-hidden rounded-lg border border-border bg-surface-hover/50">
+          <div className="max-h-96 overflow-y-auto md:max-h-[600px]">
+            <div className="space-y-3 p-4">
+              {diffLines.map((line) => (
+                <div
+                  key={line.lineNumber}
+                  className="grid gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm sm:grid-cols-2"
+                >
+                  {/* Left Side */}
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-xs font-medium uppercase tracking-wider text-secondary">
+                      <span>Line {line.lineNumber}</span>
+                      <span className={line.hasDifference ? "text-rose-600 dark:text-rose-400" : ""}>
+                        Text 1
+                      </span>
+                    </div>
+                    <pre className="whitespace-pre-wrap break-words rounded-md bg-surface-hover/60 p-3 font-mono text-sm leading-relaxed text-text-primary">
+                      {renderSegments(line.left)}
+                    </pre>
                   </div>
-                  <div className="whitespace-pre-wrap rounded-md border border-border bg-surface-hover/60 p-3 text-sm leading-relaxed text-text-primary">
-                    {renderSegments(line.left)}
-                  </div>
-                </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs uppercase tracking-wide text-secondary">
-                    <span>Line {line.lineNumber}</span>
-                    <span className={line.hasDifference ? "text-emerald-600 dark:text-emerald-300" : ""}>
-                      Text 2
-                    </span>
-                  </div>
-                  <div className="whitespace-pre-wrap rounded-md border border-border bg-surface-hover/60 p-3 text-sm leading-relaxed text-text-primary">
-                    {renderSegments(line.right)}
+                  {/* Right Side */}
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-xs font-medium uppercase tracking-wider text-secondary">
+                      <span>Line {line.lineNumber}</span>
+                      <span className={line.hasDifference ? "text-emerald-600 dark:text-emerald-400" : ""}>
+                        Text 2
+                      </span>
+                    </div>
+                    <pre className="whitespace-pre-wrap break-words rounded-md bg-surface-hover/60 p-3 font-mono text-sm leading-relaxed text-text-primary">
+                      {renderSegments(line.right)}
+                    </pre>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}

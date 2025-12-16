@@ -11,20 +11,21 @@ import AdBanner from "../../components/ads/AdBanner";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: "Text to Speech Converter - Free Online Tool",
+    title: "Text to Speech Converter & Downloader - Free Online Tool",
     description:
-        "Convert text to speech instantly using your browser. Free text-to-speech tool with multiple voices and languages. No download required, works offline.",
+        "Convert text to speech instantly and download as audio file. Free TTS tool with multiple voices, languages, and MP3/WebM download support.",
     keywords: [
         "text to speech",
-        "tts",
+        "tts downloader",
+        "download text to audio",
         "read aloud",
         "speech synthesis",
         "text reader",
         "voice generator",
     ],
     openGraph: {
-        title: "Free Text to Speech - Convert Text to Audio Online",
-        description: "Convert any text to natural speech instantly. Multiple voices available.",
+        title: "Free Text to Speech - Convert & Download Audio",
+        description: "Convert any text to natural speech instantly. Download audio files for free.",
         url: "/tools/text-to-speech",
         type: "website",
     },
@@ -46,8 +47,8 @@ const TextToSpeechPage = () => {
     ];
 
     const structuredData = generateToolSchema({
-        name: "Text to Speech",
-        description: "Free online text-to-speech converter tool",
+        name: "Text to Speech Converter",
+        description: "Free online text-to-speech converter and downloader tool",
         url: "/tools/text-to-speech",
     });
 
@@ -67,9 +68,9 @@ const TextToSpeechPage = () => {
                                     Free Text to Speech Converter
                                 </h1>
                                 <p className="text-xl text-text-secondary">
-                                    Convert any text to natural-sounding speech instantly. Use multiple
-                                    voices and languages right in your browser. Perfect for
-                                    accessibility, learning, and content consumption.
+                                    Convert any text to natural-sounding speech instantly. Listen online
+                                    or download the audio file for offline use. Supports multiple
+                                    languages and accents.
                                 </p>
                                 <ShareButtons
                                     url="/tools/text-to-speech"
@@ -90,6 +91,11 @@ const TextToSpeechPage = () => {
                                 </h2>
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <FeatureBox
+                                        icon="⬇️"
+                                        title="Download Audio"
+                                        description="Record and save your synthesized speech as an audio file (WebM) for offline use."
+                                    />
+                                    <FeatureBox
                                         icon="🎙️"
                                         title="Multiple Voices"
                                         description="Choose from various male and female voices in different accents and languages."
@@ -108,11 +114,6 @@ const TextToSpeechPage = () => {
                                         icon="🎚️"
                                         title="Adjustable Settings"
                                         description="Control speech rate, pitch, and volume to customize the audio output."
-                                    />
-                                    <FeatureBox
-                                        icon="🔒"
-                                        title="Privacy First"
-                                        description="All processing happens in your browser. Your text never leaves your device."
                                     />
                                     <FeatureBox
                                         icon="💰"
@@ -140,13 +141,13 @@ const TextToSpeechPage = () => {
                                     />
                                     <StepCard
                                         number={3}
-                                        title="Play Audio"
-                                        description="Click the play button to hear your text read aloud instantly."
+                                        title="Listen or Download"
+                                        description="Click 'Speak' to listen instantly, or 'Download Audio' to save the file."
                                     />
                                     <StepCard
                                         number={4}
-                                        title="Download (Optional)"
-                                        description="Some browsers support downloading the audio for offline use."
+                                        title="Permission for Download"
+                                        description="For downloading, select 'This Tab' and check 'Share Tab Audio' when prompted."
                                     />
                                 </div>
                             </section>
@@ -162,8 +163,8 @@ const TextToSpeechPage = () => {
                                         description="Help visually impaired users or those with reading difficulties access written content."
                                     />
                                     <BenefitItem
-                                        title="Multitasking"
-                                        description="Listen to articles, documents, or emails while doing other tasks."
+                                        title="Content Creation"
+                                        description="Create voiceovers for videos, presentations, or podcasts quickly and export them."
                                     />
                                     <BenefitItem
                                         title="Language Learning"
@@ -172,10 +173,6 @@ const TextToSpeechPage = () => {
                                     <BenefitItem
                                         title="Reduce Eye Strain"
                                         description="Give your eyes a rest by listening instead of reading long documents."
-                                    />
-                                    <BenefitItem
-                                        title="Content Creation"
-                                        description="Create voiceovers for videos, presentations, or podcasts quickly."
                                     />
                                 </div>
                             </section>
@@ -187,6 +184,10 @@ const TextToSpeechPage = () => {
                                 </h2>
                                 <div className="space-y-4">
                                     <FAQItem
+                                        question="How do I download the audio file?"
+                                        answer="Click the 'Download Audio' button. Your browser will ask permission to capture the screen. Select the 'Current Tab' option and ensure the 'Share tab audio' checkbox is ticked. The audio will play and record, then automatically download."
+                                    />
+                                    <FAQItem
                                         question="Is this text to speech tool really free?"
                                         answer="Yes! Our text-to-speech tool is 100% free to use with no limitations. All features are available to everyone without registration or payment."
                                     />
@@ -195,20 +196,12 @@ const TextToSpeechPage = () => {
                                         answer="The available voices depend on your browser and operating system. Most modern browsers provide multiple male and female voices in various languages and accents."
                                     />
                                     <FAQItem
-                                        question="Can I download the audio?"
-                                        answer="Some browsers support audio recording and downloading. The availability of this feature depends on your browser's capabilities and settings."
+                                        question="What format is the downloaded audio?"
+                                        answer="The audio is downloaded in .webm format, which is the standard high-quality audio container for web recordings. It can be played in VLC, Chrome, or converted to MP3."
                                     />
                                     <FAQItem
                                         question="Is my text stored or shared?"
                                         answer="No, all text-to-speech conversion happens locally in your browser using the Web Speech API. Your text is never uploaded to our servers or shared."
-                                    />
-                                    <FAQItem
-                                        question="Which languages are supported?"
-                                        answer="Support varies by browser, but typically includes English, Spanish, French, German, Italian, Japanese, Chinese, Korean, and many others. Check the voice selector to see available options."
-                                    />
-                                    <FAQItem
-                                        question="Does it work offline?"
-                                        answer="Yes! Once the page is loaded, the text-to-speech functionality works entirely in your browser and doesn't require an internet connection."
                                     />
                                 </div>
                             </section>

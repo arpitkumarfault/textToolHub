@@ -28,11 +28,6 @@ const Footer = () => {
     ],
   };
 
-  const socialLinks = [
-    { icon: FaTwitter, href: siteConfig.links.twitter, label: "Twitter" },
-    { icon: FaGithub, href: siteConfig.links.github, label: "GitHub" },
-    { icon: FaLinkedin, href: `https://linkedin.com/${siteConfig.social.linkedin}`, label: "LinkedIn" },
-  ];
 
   return (
     <footer className="border-t border-border bg-surface/50 backdrop-blur-sm">
@@ -57,26 +52,7 @@ const Footer = () => {
             <p className="text-sm text-text-secondary mb-4">
               Free professional text editing tools for everyone. No registration required.
             </p>
-            {/* Social Links */}
-            <div className="flex gap-3">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-hover text-text-tertiary transition-all hover:bg-primary hover:text-white"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    aria-label={social.label}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </motion.a>
-                );
-              })}
-            </div>
+          
           </motion.div>
 
           {/* Popular Tools */}

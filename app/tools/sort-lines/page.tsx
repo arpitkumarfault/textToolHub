@@ -1,236 +1,211 @@
+// app/tools/sort-lines/page.tsx
 import { Metadata } from "next";
 import SortLinesUI from "./_components/SortLinesUI";
-import { generateToolSchema } from "../../lib/seo";
 import TableOfContents from "../../components/shared/TableOfContents";
 import ShareButtons from "../../components/shared/ShareButtons";
 import StructuredData from "../../components/seo/StructuredData";
 import Breadcrumb from "../../components/shared/Breadcrumb";
 import SidebarAd from "../../components/ads/SidebarAd";
 import AdBanner from "../../components/ads/AdBanner";
+import InArticleAd from "../../components/ads/InArticleAd";
+import { generateToolSchema } from "../../lib/seo";
+import  { generateFAQSchema } from "../../lib/seo";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-static";
+export const revalidate = 86400;
+
+const TOOL_NAME = "Sort Lines Alphabetically";
+const TOOL_URL = "/tools/sort-lines";
+const TOOL_DESCRIPTION = "Sort text lines alphabetically, numerically, or by length. Fast, free online list sorter with deduplication and case sensitivity options.";
 
 export const metadata: Metadata = {
-    title: "Sort Lines Alphabetically - Text Line Sorter",
-    description:
-        "Sort lines of text alphabetically instantly. Ascending or descending order supported. Perfect for organizing lists, data cleanup, and text processing.",
+    title: "Sort Lines Alphabetically & Numerically - Free Online List Sorter",
+    description: TOOL_DESCRIPTION,
     keywords: [
-        "sort lines",
-        "alphabetical sort",
-        "line sorter",
-        "text sort",
-        "organize lines",
-        "sort text alphabetically",
+        "sort lines alphabetically",
+        "alphabetize list online",
+        "sort text list",
+        "numerical sort",
+        "sort by length",
+        "remove duplicates",
+        "list organizer tool"
     ],
+    alternates: { canonical: TOOL_URL },
     openGraph: {
-        title: "Sort Lines Alphabetically - Free Online Text Sorter",
-        description: "Sort text lines in alphabetical order instantly and free.",
-        url: "/tools/sort-lines",
+        title: "Sort Lines - Free Online List Organizer",
+        description: "Sort any list alphabetically, numerically, or by length instantly.",
+        url: TOOL_URL,
         type: "website",
+        images: [
+            {
+                url: "/images/og/sort-lines.png",
+                width: 1200,
+                height: 630,
+                alt: "Sort Lines Tool Interface",
+            },
+        ],
     },
 };
 
-const SortLinesPage = () => {
+const faqs = [
+    {
+        q: "What is 'Natural Sort'?",
+        a: "Natural sort treats multi-digit numbers as a single character. For example, it sorts 'Item 2' before 'Item 10', whereas standard sorting would put 'Item 10' first because '1' comes before '2'."
+    },
+    {
+        q: "Can I sort by line length?",
+        a: "Yes! Select the 'Length' sort method to order your lines from shortest to longest (or vice versa)."
+    },
+    {
+        q: "How does numerical sort work?",
+        a: "It extracts the first number found in each line and sorts based on that value. Perfect for lists like '1. Apple', '10. Banana', '2. Cherry'."
+    },
+    {
+        q: "Is my data saved?",
+        a: "No. All sorting happens locally in your browser using JavaScript. Your data is never sent to any server."
+    }
+];
+
+export default function SortLinesPage() {
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Tools", href: "/tools" },
-        { label: "Sort Lines", href: "/tools/sort-lines" },
+        { label: TOOL_NAME, href: TOOL_URL },
     ];
 
-    const tableOfContents = [
-        { id: "tool", title: "Sort Lines Tool" },
+    const tocItems = [
+        { id: "tool", title: "Sorting Tool" },
         { id: "features", title: "Features" },
-        { id: "how-to-use", title: "How to Use" },
-        { id: "benefits", title: "Benefits" },
+        { id: "how-to", title: "How to Use" },
         { id: "faq", title: "FAQ" },
     ];
 
-    const structuredData = generateToolSchema({
-        name: "Sort Lines",
-        description: "Free online alphabetical line sorting tool",
-        url: "/tools/sort-lines",
+    const toolSchema = generateToolSchema({
+        name: TOOL_NAME,
+        description: TOOL_DESCRIPTION,
+        url: TOOL_URL,
     });
+
+    const faqSchema = generateFAQSchema(faqs.map(f => ({ question: f.q, answer: f.a })));
 
     return (
         <>
-            <StructuredData data={structuredData} />
+            <StructuredData data={toolSchema} />
+            <StructuredData data={faqSchema} />
 
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <Breadcrumb items={breadcrumbItems} />
 
                     <div className="mt-6 grid gap-8 lg:grid-cols-12">
                         {/* Main Content */}
-                        <div className="lg:col-span-8">
-                            <div className="mb-8">
-                                <h1 className="mb-4 text-4xl font-bold text-gray-900">
-                                    Sort Lines Alphabetically
+                        <main className="lg:col-span-8">
+                            <header className="mb-8">
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                                    {TOOL_NAME}
                                 </h1>
-                                <p className="text-xl text-gray-600">
-                                    Sort lines of text in alphabetical order instantly. Choose
-                                    ascending (A-Z) or descending (Z-A) order. Perfect for organizing
-                                    lists, cleaning data, and text processing tasks.
+                                <p className="text-lg text-gray-600 dark:text-gray-400">
+                                    Organize your lists instantly. Sort alphabetically, numerically, 
+                                    or by length. Clean up duplicates and empty lines in seconds.
                                 </p>
-                                <ShareButtons
-                                    url="/tools/sort-lines"
-                                    title="Free Sort Lines Tool"
-                                />
-                            </div>
+                                <ShareButtons url={TOOL_URL} title={TOOL_NAME} />
+                            </header>
 
-                            <AdBanner slot="toolPageTop" format="horizontal" />
+                            <AdBanner slot="sort-top" format="horizontal" className="mb-8" />
 
-                            <div id="tool" className="my-8">
+                            <section id="tool" className="mb-12">
                                 <SortLinesUI />
-                            </div>
+                            </section>
 
-                            {/* Features */}
-                            <section id="features" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Key Features
+                            <InArticleAd slot="sort-middle" className="my-8" />
+
+                            <section id="features" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Powerful Sorting Options
                                 </h2>
                                 <div className="grid gap-6 md:grid-cols-2">
-                                    <FeatureBox
-                                        icon="🔤"
-                                        title="Alphabetical Sorting"
-                                        description="Sort lines in alphabetical order from A to Z or reverse Z to A."
+                                    <FeatureCard 
+                                        icon="🔤" 
+                                        title="Natural Sorting" 
+                                        desc="Sorts 'Item 2' before 'Item 10' correctly, unlike basic tools." 
                                     />
-                                    <FeatureBox
-                                        icon="🔢"
-                                        title="Numerical Sorting"
-                                        description="Option to sort lines numerically for number-based lists."
+                                    <FeatureCard 
+                                        icon="📏" 
+                                        title="Sort by Length" 
+                                        desc="Organize lines based on character count (shortest to longest)." 
                                     />
-                                    <FeatureBox
-                                        icon="⚡"
-                                        title="Instant Sorting"
-                                        description="See results immediately as you paste or modify your text."
+                                    <FeatureCard 
+                                        icon="🔢" 
+                                        title="Smart Numerical" 
+                                        desc="Extracts numbers from text lines for accurate numerical ordering." 
                                     />
-                                    <FeatureBox
-                                        icon="🎯"
-                                        title="Case Sensitive Option"
-                                        description="Choose case-sensitive or case-insensitive sorting based on your needs."
-                                    />
-                                    <FeatureBox
-                                        icon="📊"
-                                        title="Preserve or Remove Duplicates"
-                                        description="Option to keep or remove duplicate lines while sorting."
-                                    />
-                                    <FeatureBox
-                                        icon="🌐"
-                                        title="Multi-Language Support"
-                                        description="Works with any language and character set including special characters."
+                                    <FeatureCard 
+                                        icon="✨" 
+                                        title="Clean & Deduplicate" 
+                                        desc="Automatically remove empty lines and duplicates while sorting." 
                                     />
                                 </div>
                             </section>
 
-                            {/* How to Use */}
-                            <section id="how-to-use" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="how-to" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     How to Use
                                 </h2>
                                 <div className="space-y-4">
-                                    <StepCard
-                                        number={1}
-                                        title="Enter Your Text"
-                                        description="Paste your text with each item on a separate line into the input area."
-                                    />
-                                    <StepCard
-                                        number={2}
-                                        title="Choose Sort Order"
-                                        description="Select ascending (A-Z) or descending (Z-A) order for sorting."
-                                    />
-                                    <StepCard
-                                        number={3}
-                                        title="View Sorted Output"
-                                        description="See your lines sorted alphabetically in the output area instantly."
-                                    />
-                                    <StepCard
-                                        number={4}
-                                        title="Copy Results"
-                                        description="Click the copy button to copy the sorted lines to your clipboard."
-                                    />
+                                    {[
+                                        "Paste your list into the 'Original List' box.",
+                                        "Select 'Ascending' (A-Z) or 'Descending' (Z-A).",
+                                        "Choose a method: Alphabetical, Numerical, or Length.",
+                                        "Enable options like 'Remove Duplicates' if needed.",
+                                        "Copy your perfectly sorted list from the output box."
+                                    ].map((step, i) => (
+                                        <div key={i} className="flex gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                                                {i + 1}
+                                            </div>
+                                            <p className="text-gray-700 dark:text-gray-300 pt-1">{step}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Benefits */}
-                            <section id="benefits" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Benefits
-                                </h2>
-                                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-                                    <BenefitItem
-                                        title="Organize Lists Quickly"
-                                        description="Sort contact lists, product names, or any text list in seconds."
-                                    />
-                                    <BenefitItem
-                                        title="Data Cleanup"
-                                        description="Clean and organize messy data exports or CSV content."
-                                    />
-                                    <BenefitItem
-                                        title="Find Duplicates Easily"
-                                        description="Sorted lists make it easier to spot and remove duplicate entries."
-                                    />
-                                    <BenefitItem
-                                        title="Professional Presentation"
-                                        description="Present organized, alphabetically sorted lists in documents and reports."
-                                    />
-                                    <BenefitItem
-                                        title="Save Time"
-                                        description="Avoid manual sorting - let the tool organize hundreds of lines instantly."
-                                    />
-                                </div>
-                            </section>
+                            <InArticleAd slot="sort-bottom" className="my-8" />
 
-                            {/* FAQ */}
-                            <section id="faq" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="faq" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Frequently Asked Questions
                                 </h2>
                                 <div className="space-y-4">
-                                    <FAQItem
-                                        question="How are numbers sorted?"
-                                        answer="By default, the tool sorts alphabetically (so '10' comes before '2'). Use the numerical sorting option for proper number ordering (1, 2, 10, 20)."
-                                    />
-                                    <FAQItem
-                                        question="What about case sensitivity?"
-                                        answer="You can choose case-sensitive sorting (where 'Apple' and 'apple' are treated differently) or case-insensitive sorting (where they're treated the same)."
-                                    />
-                                    <FAQItem
-                                        question="Can it sort special characters?"
-                                        answer="Yes! The tool handles special characters, symbols, and accented letters according to standard Unicode sorting rules."
-                                    />
-                                    <FAQItem
-                                        question="Does it remove blank lines?"
-                                        answer="You can choose to keep or remove empty lines during the sorting process."
-                                    />
-                                    <FAQItem
-                                        question="Is there a limit on how many lines I can sort?"
-                                        answer="You can sort very large text files with thousands of lines. The tool handles large datasets efficiently."
-                                    />
-                                    <FAQItem
-                                        question="Can I reverse the sort order?"
-                                        answer="Yes! Choose descending order (Z-A) to reverse alphabetical sorting."
-                                    />
+                                    {faqs.map((f, i) => (
+                                        <details key={i} className="group rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <summary className="flex cursor-pointer items-center justify-between p-4 font-medium text-gray-900 dark:text-white">
+                                                {f.q}
+                                                <span className="transition-transform group-open:rotate-180">▼</span>
+                                            </summary>
+                                            <p className="px-4 pb-4 text-gray-600 dark:text-gray-400">{f.a}</p>
+                                        </details>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Related Tools */}
-                            <section className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Related Tools
                                 </h2>
                                 <div className="grid gap-4 md:grid-cols-3">
-                                    <RelatedToolCard title="Duplicate Line Remover" href="/tools/duplicate-line-remover" />
-                                    <RelatedToolCard title="Text Formatter" href="/tools/text-formatter" />
-                                    <RelatedToolCard title="Line Counter" href="/tools/line-counter" />
+                                    <RelatedToolLink title="Duplicate Remover" href="/tools/duplicate-line-remover" />
+                                    <RelatedToolLink title="Text Case Converter" href="/tools/case-converter" />
+                                    <RelatedToolLink title="Word Counter" href="/tools/word-counter" />
                                 </div>
                             </section>
-                        </div>
+                        </main>
 
                         {/* Sidebar */}
                         <aside className="lg:col-span-4">
                             <div className="sticky top-4 space-y-6">
-                                <TableOfContents items={tableOfContents} />
-                                <SidebarAd slot="toolPageSidebar" />
+                                <TableOfContents items={tocItems} />
+                                <SidebarAd slot="sort-sidebar" />
                             </div>
                         </aside>
                     </div>
@@ -238,81 +213,23 @@ const SortLinesPage = () => {
             </div>
         </>
     );
-};
+}
 
 // Helper Components
-const FeatureBox = ({
-    icon,
-    title,
-    description,
-}: {
-    icon: string;
-    title: string;
-    description: string;
-}) => (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition hover:shadow-lg">
-        <div className="mb-2 text-3xl">{icon}</div>
-        <h3 className="mb-2 text-xl font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const StepCard = ({
-    number,
-    title,
-    description,
-}: {
-    number: number;
-    title: string;
-    description: string;
-}) => (
-    <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            {number}
+function FeatureCard({ icon, title, desc }: { icon: string, title: string, desc: string }) {
+    return (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm hover:shadow-md transition">
+            <div className="text-3xl mb-3">{icon}</div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
         </div>
-        <div>
-            <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-            <p className="text-gray-600">{description}</p>
-        </div>
-    </div>
-);
+    );
+}
 
-const BenefitItem = ({
-    title,
-    description,
-}: {
-    title: string;
-    description: string;
-}) => (
-    <div className="border-l-4 border-blue-600 pl-4">
-        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const FAQItem = ({
-    question,
-    answer,
-}: {
-    question: string;
-    answer: string;
-}) => (
-    <details className="group rounded-lg border border-gray-200 bg-white p-4">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
-            {question}
-            <span className="transition group-open:rotate-180">▼</span>
-        </summary>
-        <p className="mt-3 text-gray-600">{answer}</p>
-    </details>
-);
-
-const RelatedToolCard = ({ title, href }: { title: string; href: string }) => (
-    <a
-        href={href}
-        className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-600 hover:shadow-md"
-    >
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-    </a>
-);
-
-export default SortLinesPage;
+function RelatedToolLink({ title, href }: { title: string, href: string }) {
+    return (
+        <Link href={href} className="block p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-500 transition text-center font-medium text-gray-900 dark:text-white">
+            {title}
+        </Link>
+    );
+}

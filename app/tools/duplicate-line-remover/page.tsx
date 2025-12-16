@@ -1,235 +1,210 @@
+// app/tools/duplicate-line-remover/page.tsx
 import { Metadata } from "next";
 import DuplicateLineRemoverUI from "./_components/DuplicateLineRemoverUI";
-import { generateToolSchema } from "../../lib/seo";
+import { generateToolSchema ,generateFAQSchema} from "../../lib/seo";
 import TableOfContents from "../../components/shared/TableOfContents";
 import ShareButtons from "../../components/shared/ShareButtons";
 import StructuredData from "../../components/seo/StructuredData";
 import Breadcrumb from "../../components/shared/Breadcrumb";
 import SidebarAd from "../../components/ads/SidebarAd";
 import AdBanner from "../../components/ads/AdBanner";
+import InArticleAd from "../../components/ads/InArticleAd";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-static";
+export const revalidate = 86400;
+
+const TOOL_NAME = "Duplicate Line Remover";
+const TOOL_URL = "/tools/duplicate-line-remover";
+const TOOL_DESCRIPTION = "Instantly remove duplicate lines from text lists. Keep unique entries, preserve order, and clean up your data for free.";
 
 export const metadata: Metadata = {
-    title: "Remove Duplicate Lines - Free Online Tool",
-    description:
-        "Remove duplicate lines from text instantly. Keep first occurrence and maintain order. Perfect for data cleanup, text processing, and list management.",
+    title: "Remove Duplicate Lines Online - Free Text Deduplication Tool",
+    description: TOOL_DESCRIPTION,
     keywords: [
         "remove duplicate lines",
-        "deduplicate text",
-        "unique lines",
-        "remove duplicates",
-        "text deduplication",
+        "delete duplicate text",
+        "deduplicate list",
+        "unique line finder",
+        "text cleaner online",
+        "remove duplicates from list",
+        "list deduplication"
     ],
+    alternates: { canonical: TOOL_URL },
     openGraph: {
-        title: "Duplicate Line Remover - Remove Duplicate Text Lines",
-        description: "Remove duplicate lines from text while preserving order.",
-        url: "/tools/duplicate-line-remover",
+        title: "Duplicate Line Remover - Clean Text Lists Online",
+        description: "Remove duplicate lines and clean up your text lists instantly. Free, fast, and secure.",
+        url: TOOL_URL,
         type: "website",
+        images: [
+            {
+                url: "/images/og/duplicate-remover.png",
+                width: 1200,
+                height: 630,
+                alt: "Duplicate Line Remover Tool",
+            },
+        ],
     },
 };
 
-const DuplicateLineRemoverPage = () => {
+const faqs = [
+    {
+        q: "How does it handle duplicates?",
+        a: "It keeps the first occurrence of every line and removes subsequent repeats, preserving the original order of your unique items."
+    },
+    {
+        q: "What does 'Trim Whitespace' do?",
+        a: "It ignores spaces at the start and end of lines. So ' Apple ' and 'Apple' will be treated as duplicates and cleaned up."
+    },
+    {
+        q: "Is case sensitivity supported?",
+        a: "Yes. By default, 'Apple' and 'apple' are treated as the same item (duplicates). Enable 'Case Sensitive' if you want to keep both."
+    },
+    {
+        q: "Is my data private?",
+        a: "Yes. All processing happens 100% in your browser using JavaScript. No text is ever sent to our servers."
+    }
+];
+
+export default function DuplicateLineRemoverPage() {
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Tools", href: "/tools" },
-        { label: "Duplicate Line Remover", href: "/tools/duplicate-line-remover" },
+        { label: TOOL_NAME, href: TOOL_URL },
     ];
 
-    const tableOfContents = [
-        { id: "tool", title: "Duplicate Line Remover" },
-        { id: "features", title: "Features" },
-        { id: "how-to-use", title: "How to Use" },
-        { id: "benefits", title: "Benefits" },
+    const tocItems = [
+        { id: "tool", title: "Deduplication Tool" },
+        { id: "features", title: "Key Features" },
+        { id: "how-to", title: "How to Use" },
         { id: "faq", title: "FAQ" },
     ];
 
-    const structuredData = generateToolSchema({
-        name: "Duplicate Line Remover",
-        description: "Free online tool to remove duplicate lines from text",
-        url: "/tools/duplicate-line-remover",
+    const toolSchema = generateToolSchema({
+        name: TOOL_NAME,
+        description: TOOL_DESCRIPTION,
+        url: TOOL_URL,
     });
+
+    const faqSchema = generateFAQSchema(faqs.map(f => ({ question: f.q, answer: f.a })));
 
     return (
         <>
-            <StructuredData data={structuredData} />
+            <StructuredData data={toolSchema} />
+            <StructuredData data={faqSchema} />
 
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <Breadcrumb items={breadcrumbItems} />
 
                     <div className="mt-6 grid gap-8 lg:grid-cols-12">
                         {/* Main Content */}
-                        <div className="lg:col-span-8">
-                            <div className="mb-8">
-                                <h1 className="mb-4 text-4xl font-bold text-gray-900">
-                                    Remove Duplicate Lines
+                        <main className="lg:col-span-8">
+                            <header className="mb-8">
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                                    {TOOL_NAME}
                                 </h1>
-                                <p className="text-xl text-gray-600">
-                                    Remove duplicate lines from your text instantly while preserving
-                                    the original order. Perfect for cleaning data, managing lists, and
-                                    text processing tasks.
+                                <p className="text-lg text-gray-600 dark:text-gray-400">
+                                    Clean up your lists by automatically removing repeated lines. 
+                                    Perfect for email lists, data cleaning, and inventory management.
                                 </p>
-                                <ShareButtons
-                                    url="/tools/duplicate-line-remover"
-                                    title="Free Duplicate Line Remover"
-                                />
-                            </div>
+                                <ShareButtons url={TOOL_URL} title={TOOL_NAME} />
+                            </header>
 
-                            <AdBanner slot="toolPageTop" format="horizontal" />
+                            <AdBanner slot="dedup-top" format="horizontal" className="mb-8" />
 
-                            <div id="tool" className="my-8">
+                            <section id="tool" className="mb-12">
                                 <DuplicateLineRemoverUI />
-                            </div>
+                            </section>
 
-                            {/* Features */}
-                            <section id="features" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Key Features
+                            <InArticleAd slot="dedup-middle" className="my-8" />
+
+                            <section id="features" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Why Use This Tool?
                                 </h2>
                                 <div className="grid gap-6 md:grid-cols-2">
-                                    <FeatureBox
-                                        icon="🔍"
-                                        title="Smart Detection"
-                                        description="Automatically identifies and removes exact duplicate lines from your text."
+                                    <FeatureCard 
+                                        icon="✨" 
+                                        title="Smart Cleaning" 
+                                        desc="Automatically detects and removes exact duplicates instantly." 
                                     />
-                                    <FeatureBox
-                                        icon="📋"
-                                        title="Preserve Order"
-                                        description="Maintains the original order of lines, keeping the first occurrence of each unique line."
+                                    <FeatureCard 
+                                        icon="📊" 
+                                        title="Live Statistics" 
+                                        desc="See exactly how many duplicate lines were found and removed." 
                                     />
-                                    <FeatureBox
-                                        icon="⚙️"
-                                        title="Case Sensitivity"
-                                        description="Choose case-sensitive or case-insensitive duplicate detection."
+                                    <FeatureCard 
+                                        icon="✂️" 
+                                        title="Whitespace Trimming" 
+                                        desc="Intelligently handles messy data with extra spaces." 
                                     />
-                                    <FeatureBox
-                                        icon="⚡"
-                                        title="Instant Results"
-                                        description="See duplicate lines removed in real-time as you paste or edit text."
-                                    />
-                                    <FeatureBox
-                                        icon="📊"
-                                        title="Statistics"
-                                        description="View count of duplicates found and removed for better insight."
-                                    />
-                                    <FeatureBox
-                                        icon="🎯"
-                                        title="Trim Whitespace"
-                                        description="Option to ignore leading/trailing spaces when comparing lines."
+                                    <FeatureCard 
+                                        icon="🔒" 
+                                        title="100% Secure" 
+                                        desc="Data never leaves your device. Everything runs locally." 
                                     />
                                 </div>
                             </section>
 
-                            {/* How to Use */}
-                            <section id="how-to-use" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="how-to" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     How to Use
                                 </h2>
                                 <div className="space-y-4">
-                                    <StepCard
-                                        number={1}
-                                        title="Paste Your Text"
-                                        description="Copy and paste your text with each item on a separate line into the input area."
-                                    />
-                                    <StepCard
-                                        number={2}
-                                        title="Configure Options"
-                                        description="Choose case sensitivity and whitespace trimming options if needed."
-                                    />
-                                    <StepCard
-                                        number={3}
-                                        title="View Results"
-                                        description="See the deduplicated text with all duplicate lines removed instantly."
-                                    />
-                                    <StepCard
-                                        number={4}
-                                        title="Copy Unique Lines"
-                                        description="Click copy to get the clean text with only unique lines."
-                                    />
+                                    {[
+                                        "Paste your list of items into the 'Original Text' box.",
+                                        "The tool automatically processes your text.",
+                                        "Adjust settings like 'Case Sensitive' if needed.",
+                                        "Review the result in the 'Unique Lines' box.",
+                                        "Click 'Copy Result' to use your clean list."
+                                    ].map((step, i) => (
+                                        <div key={i} className="flex gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                                                {i + 1}
+                                            </div>
+                                            <p className="text-gray-700 dark:text-gray-300 pt-1">{step}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Benefits */}
-                            <section id="benefits" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Benefits
-                                </h2>
-                                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-                                    <BenefitItem
-                                        title="Clean Data Quickly"
-                                        description="Remove duplicates from data exports, CSV files, or text lists in seconds."
-                                    />
-                                    <BenefitItem
-                                        title="Save Storage Space"
-                                        description="Reduce file size by eliminating redundant duplicate entries."
-                                    />
-                                    <BenefitItem
-                                        title="Improve Data Quality"
-                                        description="Ensure data accuracy by keeping only unique entries in your lists."
-                                    />
-                                    <BenefitItem
-                                        title="Better Organization"
-                                        description="Maintain clean, organized lists without manual checking for duplicates."
-                                    />
-                                    <BenefitItem
-                                        title="Time Efficient"
-                                        description="Process thousands of lines instantly instead of manual deduplication."
-                                    />
-                                </div>
-                            </section>
+                            <InArticleAd slot="dedup-bottom" className="my-8" />
 
-                            {/* FAQ */}
-                            <section id="faq" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="faq" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Frequently Asked Questions
                                 </h2>
                                 <div className="space-y-4">
-                                    <FAQItem
-                                        question="Which occurrence of a duplicate line is kept?"
-                                        answer="The tool keeps the first occurrence of each unique line and removes all subsequent duplicates. This preserves the original order of your text."
-                                    />
-                                    <FAQItem
-                                        question="Is the comparison case-sensitive?"
-                                        answer="You can choose! Enable case-sensitive mode to treat 'Hello' and 'hello' as different lines, or disable it to treat them as duplicates."
-                                    />
-                                    <FAQItem
-                                        question="What about lines with extra spaces?"
-                                        answer="Use the 'trim whitespace' option to ignore leading and trailing spaces when comparing lines. This helps catch duplicates that differ only in spacing."
-                                    />
-                                    <FAQItem
-                                        question="Can it handle very large files?"
-                                        answer="Yes! The tool efficiently processes large text files with thousands of lines."
-                                    />
-                                    <FAQItem
-                                        question="Does it work with empty lines?"
-                                        answer="Yes, empty lines are treated as unique entries. If you have multiple empty lines, only the first one will be kept."
-                                    />
-                                    <FAQItem
-                                        question="Is my data stored or shared?"
-                                        answer="No, all processing happens locally in your browser. Your text is never uploaded to our servers or stored."
-                                    />
+                                    {faqs.map((f, i) => (
+                                        <details key={i} className="group rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <summary className="flex cursor-pointer items-center justify-between p-4 font-medium text-gray-900 dark:text-white">
+                                                {f.q}
+                                                <span className="transition-transform group-open:rotate-180">▼</span>
+                                            </summary>
+                                            <p className="px-4 pb-4 text-gray-600 dark:text-gray-400">{f.a}</p>
+                                        </details>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Related Tools */}
-                            <section className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Related Tools
                                 </h2>
                                 <div className="grid gap-4 md:grid-cols-3">
-                                    <RelatedToolCard title="Sort Lines" href="/tools/sort-lines" />
-                                    <RelatedToolCard title="Text Formatter" href="/tools/text-formatter" />
-                                    <RelatedToolCard title="Line Counter" href="/tools/line-counter" />
+                                    <RelatedToolLink title="Sort Lines" href="/tools/sort-lines" />
+                                    <RelatedToolLink title="Word Counter" href="/tools/word-counter" />
+                                    <RelatedToolLink title="Case Converter" href="/tools/case-converter" />
                                 </div>
                             </section>
-                        </div>
+                        </main>
 
                         {/* Sidebar */}
                         <aside className="lg:col-span-4">
                             <div className="sticky top-4 space-y-6">
-                                <TableOfContents items={tableOfContents} />
-                                <SidebarAd slot="toolPageSidebar" />
+                                <TableOfContents items={tocItems} />
+                                <SidebarAd slot="dedup-sidebar" />
                             </div>
                         </aside>
                     </div>
@@ -237,81 +212,23 @@ const DuplicateLineRemoverPage = () => {
             </div>
         </>
     );
-};
+}
 
 // Helper Components
-const FeatureBox = ({
-    icon,
-    title,
-    description,
-}: {
-    icon: string;
-    title: string;
-    description: string;
-}) => (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition hover:shadow-lg">
-        <div className="mb-2 text-3xl">{icon}</div>
-        <h3 className="mb-2 text-xl font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const StepCard = ({
-    number,
-    title,
-    description,
-}: {
-    number: number;
-    title: string;
-    description: string;
-}) => (
-    <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            {number}
+function FeatureCard({ icon, title, desc }: { icon: string, title: string, desc: string }) {
+    return (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm hover:shadow-md transition">
+            <div className="text-3xl mb-3">{icon}</div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
         </div>
-        <div>
-            <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-            <p className="text-gray-600">{description}</p>
-        </div>
-    </div>
-);
+    );
+}
 
-const BenefitItem = ({
-    title,
-    description,
-}: {
-    title: string;
-    description: string;
-}) => (
-    <div className="border-l-4 border-blue-600 pl-4">
-        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const FAQItem = ({
-    question,
-    answer,
-}: {
-    question: string;
-    answer: string;
-}) => (
-    <details className="group rounded-lg border border-gray-200 bg-white p-4">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
-            {question}
-            <span className="transition group-open:rotate-180">▼</span>
-        </summary>
-        <p className="mt-3 text-gray-600">{answer}</p>
-    </details>
-);
-
-const RelatedToolCard = ({ title, href }: { title: string; href: string }) => (
-    <a
-        href={href}
-        className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-600 hover:shadow-md"
-    >
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-    </a>
-);
-
-export default DuplicateLineRemoverPage;
+function RelatedToolLink({ title, href }: { title: string, href: string }) {
+    return (
+        <Link href={href} className="block p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-500 transition text-center font-medium text-gray-900 dark:text-white">
+            {title}
+        </Link>
+    );
+}

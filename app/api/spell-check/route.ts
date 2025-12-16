@@ -1,34 +1,43 @@
 // app/api/spell-check/route.ts
-import { NextResponse } from "next/server";
-import { checkText } from "../../lib/spell";
+import { NextRequest, NextResponse } from "next/server";
+import { checkSpelling } from "../../lib/spell";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { text } = await request.json();
+    const body = await request.json();
+    const { text } = body;
 
     // Validation
     if (!text || typeof text !== "string") {
       return NextResponse.json(
-        { error: "Invalid text provided" },
+        { error: "Text is required", success: false },
         { status: 400 }
       );
     }
 
-    if (text.length > 10000) {
+    if (text.length > 50000) {
       return NextResponse.json(
-        { error: "Text too long. Maximum 10,000 characters allowed." },
+        { error: "Text too long. Maximum 50,000 characters allowed.", success: false },
         { status: 400 }
       );
     }
 
-    // Check spelling
-    const errors = checkText(text);
+    // Process text: Preserve line breaks but clean extra whitespace
+    // This regex splits by words but keeps punctuation intact for better context if needed later
+    // For spell checking, we just need the raw words.
+    
+    // Pass the raw text to the spell checker utility
+    const result = checkSpelling(text);
 
-    return NextResponse.json({ errors }, { status: 200 });
+    return NextResponse.json({
+      success: true,
+      errors: result.errors,
+      stats: result.stats,
+    });
   } catch (error: any) {
     console.error("Spell check error:", error);
     return NextResponse.json(
-      { error: "Failed to check spelling", details: error.message },
+      { error: error.message || "Spell checking failed", success: false },
       { status: 500 }
     );
   }

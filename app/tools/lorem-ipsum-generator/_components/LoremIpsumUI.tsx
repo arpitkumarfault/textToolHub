@@ -1,6 +1,7 @@
+// app/tools/lorem-ipsum-generator/_components/LoremIpsumUI.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const LOREM_WORDS = [
     "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
@@ -14,135 +15,162 @@ const LOREM_WORDS = [
 ];
 
 export default function LoremIpsumUI() {
-    const [paragraphs, setParagraphs] = useState(3);
-    const [sentencesPerParagraph, setSentencesPerParagraph] = useState(5);
+    const [count, setCount] = useState(3);
+    const [type, setType] = useState<"paragraphs" | "sentences" | "words">("paragraphs");
+    const [startWithLorem, setStartWithLorem] = useState(true);
     const [output, setOutput] = useState("");
+    const [copied, setCopied] = useState(false);
 
-    const generateWord = () => {
-        return LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)];
-    };
+    const generateText = useCallback(() => {
+        const getWord = () => LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)];
+        
+        const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-    const generateSentence = () => {
-        const length = Math.floor(Math.random() * 10) + 5; // 5-15 words
-        const words = [];
-        for (let i = 0; i < length; i++) {
-            words.push(i === 0 ? capitalize(generateWord()) : generateWord());
+        const getSentence = () => {
+            const length = Math.floor(Math.random() * 10) + 5;
+            const words = Array.from({ length }, getWord);
+            words[0] = capitalize(words[0]);
+            return words.join(" ") + ".";
+        };
+
+        const getParagraph = () => {
+            const length = Math.floor(Math.random() * 3) + 3;
+            return Array.from({ length }, getSentence).join(" ");
+        };
+
+        let result = "";
+
+        if (type === "paragraphs") {
+            const paragraphs = Array.from({ length: count }, getParagraph);
+            if (startWithLorem && count > 0) {
+                paragraphs[0] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " + paragraphs[0].split(". ").slice(1).join(". ");
+            }
+            result = paragraphs.join("\n\n");
+        } else if (type === "sentences") {
+            const sentences = Array.from({ length: count }, getSentence);
+            if (startWithLorem && count > 0) {
+                sentences[0] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            }
+            result = sentences.join(" ");
+        } else {
+            const words = Array.from({ length: count }, getWord);
+            if (startWithLorem && count > 0) {
+                words.splice(0, 5, "lorem", "ipsum", "dolor", "sit", "amet");
+            }
+            result = words.join(" ");
         }
-        return words.join(" ") + ".";
-    };
 
-    const capitalize = (word: string) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    };
+        setOutput(result);
+    }, [count, type, startWithLorem]);
 
-    const generateParagraph = (sentences: number) => {
-        const sentenceArray = [];
-        for (let i = 0; i < sentences; i++) {
-            sentenceArray.push(generateSentence());
-        }
-        return sentenceArray.join(" ");
-    };
-
-    const generateLorem = () => {
-        const paragraphArray = [];
-        for (let i = 0; i < paragraphs; i++) {
-            paragraphArray.push(generateParagraph(sentencesPerParagraph));
-        }
-        setOutput(paragraphArray.join("\n\n"));
-    };
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(output);
-    };
-
-    const handleClear = () => {
-        setOutput("");
+    const handleCopy = async () => {
+        if (!output) return;
+        await navigator.clipboard.writeText(output);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            {/* Settings */}
-            <div className="mb-6 grid gap-4 md:grid-cols-2">
-                <div>
-                    <label htmlFor="paragraphs" className="mb-2 block font-semibold text-gray-900">
-                        Number of Paragraphs
-                    </label>
-                    <input
-                        type="number"
-                        id="paragraphs"
-                        min="1"
-                        max="50"
-                        value={paragraphs}
-                        onChange={(e) => setParagraphs(Number(e.target.value))}
-                        className="w-full rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="sentences" className="mb-2 block font-semibold text-gray-900">
-                        Sentences Per Paragraph
-                    </label>
-                    <input
-                        type="number"
-                        id="sentences"
-                        min="1"
-                        max="20"
-                        value={sentencesPerParagraph}
-                        onChange={(e) => setSentencesPerParagraph(Number(e.target.value))}
-                        className="w-full rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-            </div>
-
-            {/* Generate Button */}
-            <div className="mb-6">
-                <button
-                    onClick={generateLorem}
-                    className="w-full rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 md:w-auto"
-                >
-                    Generate Lorem Ipsum
-                </button>
-            </div>
-
-            {/* Output */}
-            {output && (
-                <>
-                    <div className="mb-4">
-                        <label className="mb-2 block font-semibold text-gray-900">
-                            Generated Text
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg p-6">
+            {/* Controls */}
+            <div className="grid gap-6 md:grid-cols-2 mb-6">
+                <div className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Type
                         </label>
-                        <textarea
-                            value={output}
-                            readOnly
-                            className="min-h-[300px] w-full rounded-lg border border-gray-300 bg-gray-50 p-3 font-mono text-sm"
+                        <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
+                            {(["paragraphs", "sentences", "words"] as const).map((t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => setType(t)}
+                                    className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-all ${
+                                        type === t
+                                            ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                                            : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                                    }`}
+                                >
+                                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Quantity
+                        </label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={count}
+                            onChange={(e) => setCount(Math.max(1, parseInt(e.target.value) || 0))}
+                            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition"
                         />
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-3">
-                        <button
-                            onClick={handleCopy}
-                            className="rounded-lg bg-green-600 px-6 py-2 font-semibold text-white transition hover:bg-green-700"
-                        >
-                            📋 Copy to Clipboard
-                        </button>
-                        <button
-                            onClick={handleClear}
-                            className="rounded-lg border border-gray-300 bg-white px-6 py-2 font-semibold text-gray-700 transition hover:bg-gray-50"
-                        >
-                            🗑️ Clear
-                        </button>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="start-lorem"
+                            checked={startWithLorem}
+                            onChange={(e) => setStartWithLorem(e.target.checked)}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <label htmlFor="start-lorem" className="text-sm text-gray-700 dark:text-gray-300 select-none">
+                            Start with "Lorem ipsum..."
+                        </label>
                     </div>
 
-                    {/* Stats */}
-                    <div className="mt-4 rounded-lg bg-blue-50 p-4">
-                        <h3 className="mb-2 font-semibold text-blue-900">Statistics:</h3>
-                        <div className="grid gap-2 text-sm text-blue-800 md:grid-cols-3">
-                            <div>• Paragraphs: {paragraphs}</div>
-                            <div>• Words: ~{output.split(/\s+/).length}</div>
-                            <div>• Characters: {output.length}</div>
+                    <button
+                        onClick={generateText}
+                        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
+                    >
+                        Generate Text
+                    </button>
+                </div>
+
+                {/* Output Area */}
+                <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Generated Text
+                    </label>
+                    <textarea
+                        value={output}
+                        readOnly
+                        placeholder="Generated text will appear here..."
+                        className="h-[300px] w-full resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 p-4 text-sm text-gray-900 dark:text-gray-100 font-serif leading-relaxed focus:outline-none"
+                    />
+                    
+                    {output && (
+                        <div className="absolute top-9 right-2 flex gap-2">
+                            <button
+                                onClick={handleCopy}
+                                className={`rounded-md px-3 py-1.5 text-xs font-medium text-white transition shadow-sm ${
+                                    copied ? "bg-green-600" : "bg-gray-800/80 hover:bg-gray-900"
+                                }`}
+                            >
+                                {copied ? "✓ Copied" : "Copy"}
+                            </button>
+                            <button
+                                onClick={() => setOutput("")}
+                                className="rounded-md bg-gray-800/80 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-600 transition shadow-sm"
+                            >
+                                Clear
+                            </button>
                         </div>
-                    </div>
-                </>
+                    )}
+                </div>
+            </div>
+            
+            {/* Quick Stats */}
+            {output && (
+                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex gap-4">
+                    <span>Paragraphs: {type === 'paragraphs' ? count : Math.ceil(count / 5)}</span>
+                    <span>Words: {output.split(/\s+/).filter(Boolean).length}</span>
+                    <span>Characters: {output.length}</span>
+                </div>
             )}
         </div>
     );

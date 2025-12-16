@@ -31,11 +31,6 @@ export const siteConfig = {
     instagram: "texttoolshub",
     linkedin: "company/texttoolshub",
   },
-  links: {
-    twitter: "https://twitter.com/texttoolshub",
-    github: "https://github.com/texttoolshub",
-    facebook: "https://facebook.com/texttoolshub",
-  },
 };
 
 export const toolsConfig = {

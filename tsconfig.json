@@ -26,7 +26,8 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "next-env.d.ts",
@@ -34,7 +35,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "app/tools/case-converter/_components/CaseConverterUI.tss"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

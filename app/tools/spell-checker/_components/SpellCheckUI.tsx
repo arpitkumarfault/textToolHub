@@ -9,7 +9,6 @@ const SpellCheckUI = () => {
   const [corrections, setCorrections] = useState<any[]>([]);
 
   const checkSpelling = () => {
-    // Basic spell check logic - you can integrate a proper spell check library
     const commonMisspellings = [
       { wrong: "teh", correct: "the" },
       { wrong: "recieve", correct: "receive" },

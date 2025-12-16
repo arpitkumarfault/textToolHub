@@ -13,7 +13,7 @@ const RelatedPosts = ({ posts }: RelatedPostsProps) => {
       <h2 className="mb-6 text-2xl font-bold text-gray-900">
         Related Articles
       </h2>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
         {posts.map((post) => (
           <BlogCard key={post.slug} post={post} />
         ))}

@@ -1,126 +1,207 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { Copy, Download, RefreshCw, Sparkles, Check, Shuffle } from "lucide-react";
+import { Button } from "../../../components/ui/Button";
+import { Textarea } from "../../../components/ui/Textarea";
+import { Badge } from "../../../components/ui/Badge";
+import { Tooltip } from "../../../components/ui/Tooltip";
+import { ToggleGroup, ToggleGroupItem } from "../../../components/ui/ToggleGroup";
 
-type ReverseMode = "all" | "words";
+type Mode = "full" | "words" | "lines" | "sentences" | "random";
 
 export default function TextReverserUI() {
-    const [input, setInput] = useState("");
-    const [output, setOutput] = useState("");
-    const [mode, setMode] = useState<ReverseMode>("all");
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [mode, setMode] = useState<Mode>("full");
+  const [copied, setCopied] = useState(false);
 
-    useEffect(() => {
-        if (mode === "all") {
-            setOutput(input.split("").reverse().join(""));
-        } else {
-            // Reverse each word individually
-            const words = input.split(" ");
-            const reversedWords = words.map(word => word.split("").reverse().join(""));
-            setOutput(reversedWords.join(" "));
+  const reverseText = useCallback(() => {
+    if (!input.trim()) {
+      setOutput("");
+      return;
+    }
+
+    let result = "";
+
+    switch (mode) {
+      case "full":
+        result = input.split("").reverse().join("");
+        break;
+
+      case "words":
+        result = input
+          .split(" ")
+          .map(word => word.split("").reverse().join(""))
+          .join(" ");
+        break;
+
+      case "lines":
+        result = input
+          .split("\n")
+          .reverse()
+          .join("\n");
+        break;
+
+      case "sentences":
+        result = input
+          .split(/(?<=[.!?])\s+/)
+          .reverse()
+          .join(" ");
+        break;
+
+      case "random":
+        const chars = input.split("");
+        for (let i = chars.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [chars[i], chars[j]] = [chars[j], chars[i]];
         }
-    }, [input, mode]);
+        result = chars.join("");
+        break;
+    }
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(output);
-    };
+    setOutput(result);
+  }, [input, mode]);
 
-    const handleClear = () => {
-        setInput("");
-        setOutput("");
-    };
+  useEffect(() => {
+    reverseText();
+  }, [reverseText]);
 
-    return (
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            {/* Mode Selection */}
-            <div className="mb-6">
-                <label className="mb-2 block font-semibold text-gray-900">
-                    Reverse Mode
-                </label>
-                <div className="flex gap-4">
-                    <label className="flex items-center">
-                        <input
-                            type="radio"
-                            name="mode"
-                            value="all"
-                            checked={mode === "all"}
-                            onChange={(e) => setMode(e.target.value as ReverseMode)}
-                            className="mr-2"
-                        />
-                        <span className="text-gray-700">Reverse Entire Text</span>
-                    </label>
-                    <label className="flex items-center">
-                        <input
-                            type="radio"
-                            name="mode"
-                            value="words"
-                            checked={mode === "words"}
-                            onChange={(e) => setMode(e.target.value as ReverseMode)}
-                            className="mr-2"
-                        />
-                        <span className="text-gray-700">Reverse Words Only</span>
-                    </label>
-                </div>
-            </div>
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(output);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-            <div className="grid gap-6 lg:grid-cols-2">
-                {/* Input */}
-                <div>
-                    <label htmlFor="input-text" className="mb-2 block font-semibold text-gray-900">
-                        Original Text
-                    </label>
-                    <textarea
-                        id="input-text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Type your text here to reverse..."
-                        className="min-h-[300px] w-full rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
+  const downloadAsFile = () => {
+    const blob = new Blob([output], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reversed-${mode}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
-                {/* Output */}
-                <div>
-                    <label htmlFor="output-text" className="mb-2 block font-semibold text-gray-900">
-                        Reversed Text
-                    </label>
-                    <textarea
-                        id="output-text"
-                        value={output}
-                        readOnly
-                        className="min-h-[300px] w-full rounded-lg border border-gray-300 bg-gray-50 p-3 font-mono"
-                    />
-                </div>
-            </div>
+  const regenerate = () => {
+    reverseText();
+  };
 
-            {/* Action Buttons */}
-            <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                    onClick={handleCopy}
-                    disabled={!output}
-                    className="rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                    📋 Copy Reversed Text
-                </button>
-                <button
-                    onClick={handleClear}
-                    disabled={!input}
-                    className="rounded-lg border border-gray-300 bg-white px-6 py-2 font-semibold text-gray-700 transition hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                    🗑️ Clear
-                </button>
-            </div>
-
-            {/* Example */}
-            {!input && (
-                <div className="mt-6 rounded-lg bg-blue-50 p-4">
-                    <h3 className="mb-2 font-semibold text-blue-900">Example:</h3>
-                    <p className="text-sm text-blue-800">
-                        <strong>Reverse Entire Text:</strong> "Hello World" → "dlroW olleH"
-                    </p>
-                    <p className="text-sm text-blue-800">
-                        <strong>Reverse Words Only:</strong> "Hello World" → "olleH dlroW"
-                    </p>
-                </div>
-            )}
+  return (
+    <div className="rounded-2xl border border-border bg-card p-6 md:p-8 shadow-xl">
+      {/* Mode Selector */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <Sparkles className="w-6 h-6 text-primary" />
+          <h3 className="text-xl font-semibold">Reverse Mode</h3>
         </div>
-    );
+        <ToggleGroup
+          type="single"
+          value={mode}
+          onValueChange={(v) => v && setMode(v as Mode)}
+          className="grid grid-cols-2 md:grid-cols-5 gap-3"
+        >
+          <ToggleGroupItem value="full" className="font-medium text-xs">
+            Full Text
+          </ToggleGroupItem>
+          <ToggleGroupItem value="words" className="font-medium text-xs">
+            Words Only
+          </ToggleGroupItem>
+          <ToggleGroupItem value="lines" className="font-medium text-xs">
+            Lines
+          </ToggleGroupItem>
+          <ToggleGroupItem value="sentences" className="font-medium text-xs">
+            Sentences
+          </ToggleGroupItem>
+          <ToggleGroupItem value="random" className="font-medium text-xs">
+            Shuffle!
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Input */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="font-semibold text-primary">Original Text</label>
+            <Badge variant="secondary">{input.length} chars</Badge>
+          </div>
+          <Textarea
+            placeholder="Type or paste text to reverse..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="min-h-96 font-mono text-base resize-none bg-background/50 border-border focus:ring-primary"
+            spellCheck={false}
+          />
+          <Button onClick={() => setInput("")} variant="outline" className="w-full">
+            Clear All
+          </Button>
+        </div>
+
+        {/* Output */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="font-semibold text-primary">Reversed Text</label>
+            <Badge variant="outline">{output.length} chars</Badge>
+          </div>
+          <Textarea
+            value={output}
+            readOnly
+            placeholder="Reversed text appears here instantly..."
+            className="min-h-96 font-mono text-lg resize-none bg-background/70 text-foreground selection:bg-primary/20 leading-relaxed tracking-wide"
+          />
+
+          <div className="flex gap-3">
+            <Button onClick={copyToClipboard} disabled={!output} className="flex-1 text-base">
+              {copied ? (
+                <>
+                  <Check className="w-5 h-5 mr-2" /> Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-5 h-5 mr-2" /> Copy Text
+                </>
+              )}
+            </Button>
+
+            <Button onClick={downloadAsFile} disabled={!output} variant="secondary" className="flex-1">
+              <Download className="w-5 h-5 mr-2" /> Download
+            </Button>
+
+            {mode === "random" && (
+              <Tooltip content="Shuffle again!" position="top">
+                <Button onClick={regenerate} variant="outline" size="icon">
+                  <Shuffle className="w-5 h-5" />
+                </Button>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Fun Examples */}
+      <div className="mt-10 rounded-xl bg-muted/50 border border-border/50 p-6">
+        <p className="font-semibold text-lg mb-4">Try these:</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            "The quick brown fox jumps over the lazy dog",
+            "Hello World! This is a test.",
+            "Racecar is a palindrome",
+            "Never odd or even",
+            "Was it a car or a cat I saw?",
+            "Able was I ere I saw Elba",
+          ].map((text) => (
+            <Button
+              key={text}
+              variant="ghost"
+              className="justify-start text-left h-auto py-3 px-4 text-sm hover:bg-primary/10 font-mono"
+              onClick={() => setInput(text)}
+            >
+              {text}
+            </Button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -1,235 +1,261 @@
+// app/tools/markdown-to-html/page.tsx
 import { Metadata } from "next";
 import MarkdownToHtmlUI from "./_components/MarkdownToHtmlUI";
-import { generateToolSchema } from "../../lib/seo";
 import TableOfContents from "../../components/shared/TableOfContents";
 import ShareButtons from "../../components/shared/ShareButtons";
 import StructuredData from "../../components/seo/StructuredData";
 import Breadcrumb from "../../components/shared/Breadcrumb";
 import SidebarAd from "../../components/ads/SidebarAd";
 import AdBanner from "../../components/ads/AdBanner";
+import InArticleAd from "../../components/ads/InArticleAd";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-static";
+export const revalidate = 86400;
+
+const TOOL_NAME = "Markdown to HTML Converter";
+const TOOL_URL = "/tools/markdown-to-html";
+const TOOL_DESCRIPTION = "Convert Markdown to clean HTML instantly. Free online tool supporting GitHub Flavored Markdown, tables, code blocks, and more.";
 
 export const metadata: Metadata = {
-    title: "Markdown to HTML Converter - Free Online Tool",
-    description:
-        "Convert Markdown to HTML instantly. Perfect for blogs, documentation, and static sites. Supports headings, lists, code blocks, tables, and more.",
-    keywords: [
-        "markdown to html",
-        "md to html",
-        "markdown converter",
-        "html generator",
-        "markdown parser",
-    ],
+    title: `${TOOL_NAME} - Free Online MD to HTML Tool`,
+    description: TOOL_DESCRIPTION,
+    keywords: ["markdown to html", "md to html", "markdown converter", "html generator", "gfm converter", "online markdown tool"],
+    alternates: { canonical: TOOL_URL },
     openGraph: {
-        title: "Markdown to HTML Converter - Convert MD to HTML Free",
-        description: "Convert Markdown syntax to clean HTML code instantly.",
-        url: "/tools/markdown-to-html",
+        title: TOOL_NAME,
+        description: TOOL_DESCRIPTION,
+        url: TOOL_URL,
         type: "website",
     },
 };
 
-const MarkdownToHtmlPage = () => {
+const faqs = [
+    { q: "What Markdown syntax is supported?", a: "We support standard Markdown plus GitHub Flavored Markdown (GFM) including tables, task lists, strikethrough, and fenced code blocks." },
+    { q: "Is this tool free?", a: "Yes, completely free with no limits, signups, or watermarks." },
+    { q: "Is my content private?", a: "Yes, all conversion happens in your browser. Nothing is sent to any server." },
+    { q: "Can I use the HTML output commercially?", a: "Absolutely! The generated HTML is yours to use however you want." },
+    { q: "Does it support code syntax highlighting?", a: "It generates proper code blocks with language classes. Add Prism.js or Highlight.js for colored highlighting." },
+];
+
+const features = [
+    { icon: "📄", title: "Full Markdown Support", desc: "Headers, bold, italic, links, images, lists, code blocks, tables & more" },
+    { icon: "⚡", title: "Real-Time Conversion", desc: "See HTML output instantly as you type" },
+    { icon: "✨", title: "Clean HTML Output", desc: "Semantic, valid HTML5 ready for production" },
+    { icon: "👁", title: "Live Preview", desc: "Toggle between code view and rendered preview" },
+    { icon: "📊", title: "GFM Support", desc: "GitHub Flavored Markdown including tables & task lists" },
+    { icon: "🔒", title: "100% Private", desc: "Everything runs in your browser" },
+];
+
+const syntaxExamples = [
+    { element: "Heading", md: "# H1 / ## H2", html: "<h1> / <h2>" },
+    { element: "Bold", md: "**text**", html: "<strong>" },
+    { element: "Italic", md: "*text*", html: "<em>" },
+    { element: "Link", md: "[text](url)", html: "<a href>" },
+    { element: "Image", md: "![alt](url)", html: "<img>" },
+    { element: "Code", md: "`code`", html: "<code>" },
+    { element: "List", md: "- item", html: "<ul><li>" },
+    { element: "Quote", md: "> text", html: "<blockquote>" },
+];
+
+const relatedTools = [
+    { title: "HTML to Markdown", href: "/tools/html-to-markdown" },
+    { title: "JSON Formatter", href: "/tools/json-formatter" },
+    { title: "Case Converter", href: "/tools/case-converter" },
+    { title: "Word Counter", href: "/tools/word-counter" },
+];
+
+export default function MarkdownToHtmlPage() {
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Tools", href: "/tools" },
-        { label: "Markdown to HTML", href: "/tools/markdown-to-html" },
+        { label: TOOL_NAME, href: TOOL_URL },
     ];
 
-    const tableOfContents = [
-        { id: "tool", title: "Markdown to HTML Converter" },
+    const tocItems = [
+        { id: "tool", title: "Converter" },
         { id: "features", title: "Features" },
         { id: "how-to-use", title: "How to Use" },
-        { id: "benefits", title: "Benefits" },
+        { id: "syntax", title: "Syntax Reference" },
         { id: "faq", title: "FAQ" },
     ];
 
-    const structuredData = generateToolSchema({
-        name: "Markdown to HTML Converter",
-        description: "Free online markdown to HTML conversion tool",
-        url: "/tools/markdown-to-html",
-    });
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: TOOL_NAME,
+        description: TOOL_DESCRIPTION,
+        url: TOOL_URL,
+        applicationCategory: "UtilityApplication",
+        operatingSystem: "Any",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    };
+
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map(f => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+    };
 
     return (
         <>
             <StructuredData data={structuredData} />
+            <StructuredData data={faqSchema} />
 
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <Breadcrumb items={breadcrumbItems} />
 
                     <div className="mt-6 grid gap-8 lg:grid-cols-12">
                         {/* Main Content */}
-                        <div className="lg:col-span-8">
-                            <div className="mb-8">
-                                <h1 className="mb-4 text-4xl font-bold text-gray-900">
-                                    Markdown to HTML Converter
+                        <main className="lg:col-span-8">
+                            {/* Hero */}
+                            <header className="mb-8">
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+                                    {TOOL_NAME}
                                 </h1>
-                                <p className="text-xl text-gray-600">
-                                    Convert Markdown syntax to clean, valid HTML code instantly.
-                                    Supports all standard Markdown features including headings, lists,
-                                    code blocks, tables, and more.
+                                <p className="text-lg text-gray-600 dark:text-gray-400">
+                                    {TOOL_DESCRIPTION}
                                 </p>
-                                <ShareButtons
-                                    url="/tools/markdown-to-html"
-                                    title="Free Markdown to HTML Converter"
-                                />
-                            </div>
+                                <ShareButtons url={TOOL_URL} title={TOOL_NAME} />
+                            </header>
 
-                            <AdBanner slot="toolPageTop" format="horizontal" />
+                            <AdBanner slot="md-top" format="horizontal" className="mb-6" />
 
-                            <div id="tool" className="my-8">
+                            {/* Tool */}
+                            <section id="tool" className="mb-12">
                                 <MarkdownToHtmlUI />
-                            </div>
+                            </section>
+
+                            <InArticleAd slot="md-middle" className="my-8" />
 
                             {/* Features */}
-                            <section id="features" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="features" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Key Features
                                 </h2>
-                                <div className="grid gap-6 md:grid-cols-2">
-                                    <FeatureBox
-                                        icon="📋"
-                                        title="Full Markdown Support"
-                                        description="Convert headings, bold, italic, links, images, lists, code blocks, tables, and more."
-                                    />
-                                    <FeatureBox
-                                        icon="⚡"
-                                        title="Real-Time Preview"
-                                        description="See live HTML output as you type your Markdown code."
-                                    />
-                                    <FeatureBox
-                                        icon="✨"
-                                        title="Clean HTML Output"
-                                        description="Generate semantic, well-formatted HTML that's ready to use in your projects."
-                                    />
-                                    <FeatureBox
-                                        icon="🎨"
-                                        title="Syntax Highlighting"
-                                        description="Markdown and HTML code are syntax-highlighted for better readability."
-                                    />
-                                    <FeatureBox
-                                        icon="📱"
-                                        title="GitHub Flavored Markdown"
-                                        description="Supports GFM extensions like task lists, strikethrough, and tables."
-                                    />
-                                    <FeatureBox
-                                        icon="🔒"
-                                        title="Privacy Protected"
-                                        description="All conversion happens in your browser. Your content stays private."
-                                    />
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    {features.map((f, i) => (
+                                        <div key={i} className="p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <div className="text-2xl mb-2">{f.icon}</div>
+                                            <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{f.title}</h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">{f.desc}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
                             {/* How to Use */}
-                            <section id="how-to-use" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="how-to-use" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     How to Use
                                 </h2>
-                                <div className="space-y-4">
-                                    <StepCard
-                                        number={1}
-                                        title="Enter Markdown"
-                                        description="Type or paste your Markdown content into the left editor pane."
-                                    />
-                                    <StepCard
-                                        number={2}
-                                        title="View HTML Output"
-                                        description="The HTML output appears automatically in the right pane as you type."
-                                    />
-                                    <StepCard
-                                        number={3}
-                                        title="Copy HTML Code"
-                                        description="Click the copy button to copy the generated HTML to your clipboard."
-                                    />
-                                    <StepCard
-                                        number={4}
-                                        title="Use in Your Project"
-                                        description="Paste the HTML into your website, blog, or documentation."
-                                    />
+                                <div className="space-y-3">
+                                    {[
+                                        "Enter or paste Markdown in the left panel",
+                                        "View real-time HTML output on the right",
+                                        "Switch to Preview tab to see rendered result",
+                                        "Copy or download the HTML for your project",
+                                    ].map((step, i) => (
+                                        <div key={i} className="flex gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                                                {i + 1}
+                                            </span>
+                                            <p className="text-gray-700 dark:text-gray-300 pt-1">{step}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Benefits */}
-                            <section id="benefits" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Benefits
+                            {/* Syntax Reference */}
+                            <section id="syntax" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Syntax Reference
                                 </h2>
-                                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-                                    <BenefitItem
-                                        title="Faster Content Creation"
-                                        description="Write in simple Markdown syntax and get HTML instantly without manual coding."
-                                    />
-                                    <BenefitItem
-                                        title="Perfect for Blogs"
-                                        description="Convert blog posts written in Markdown to HTML for your website or CMS."
-                                    />
-                                    <BenefitItem
-                                        title="Documentation Ready"
-                                        description="Create documentation in Markdown and convert to HTML for static sites or wikis."
-                                    />
-                                    <BenefitItem
-                                        title="Clean Code"
-                                        description="Get semantic, valid HTML without unnecessary markup or inline styles."
-                                    />
-                                    <BenefitItem
-                                        title="Learning Tool"
-                                        description="See how Markdown translates to HTML, perfect for learning both languages."
-                                    />
+                                <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-gray-50 dark:bg-gray-800">
+                                            <tr>
+                                                <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Element</th>
+                                                <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">Markdown</th>
+                                                <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">HTML</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                                            {syntaxExamples.map((s, i) => (
+                                                <tr key={i}>
+                                                    <td className="px-4 py-3 text-gray-900 dark:text-white">{s.element}</td>
+                                                    <td className="px-4 py-3 font-mono text-blue-600 dark:text-blue-400">{s.md}</td>
+                                                    <td className="px-4 py-3 font-mono text-gray-600 dark:text-gray-400">{s.html}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </section>
+
+                            <InArticleAd slot="md-bottom" className="my-8" />
 
                             {/* FAQ */}
-                            <section id="faq" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="faq" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Frequently Asked Questions
                                 </h2>
-                                <div className="space-y-4">
-                                    <FAQItem
-                                        question="What Markdown syntax is supported?"
-                                        answer="We support standard Markdown plus GitHub Flavored Markdown (GFM) extensions including tables, task lists, strikethrough, and autolinks."
-                                    />
-                                    <FAQItem
-                                        question="Can I convert HTML back to Markdown?"
-                                        answer="This tool converts Markdown to HTML. For HTML to Markdown conversion, you'll need a different tool."
-                                    />
-                                    <FAQItem
-                                        question="Is the HTML output valid?"
-                                        answer="Yes, the converter generates valid, semantic HTML5 code that passes W3C validation."
-                                    />
-                                    <FAQItem
-                                        question="Does it support code blocks?"
-                                        answer="Yes! Both inline code with backticks and fenced code blocks with syntax highlighting are supported."
-                                    />
-                                    <FAQItem
-                                        question="Can I use this for my blog?"
-                                        answer="Absolutely! Many bloggers write in Markdown and use converters like this to generate HTML for their posts."
-                                    />
-                                    <FAQItem
-                                        question="Is my Markdown content saved?"
-                                        answer="No, all conversion happens in your browser. Your content is never uploaded or stored on our servers."
-                                    />
+                                <div className="space-y-3">
+                                    {faqs.map((faq, i) => (
+                                        <details key={i} className="group rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <summary className="flex justify-between items-center p-4 cursor-pointer font-medium text-gray-900 dark:text-white">
+                                                {faq.q}
+                                                <span className="ml-2 transition-transform group-open:rotate-180">▼</span>
+                                            </summary>
+                                            <p className="px-4 pb-4 text-gray-600 dark:text-gray-400">{faq.a}</p>
+                                        </details>
+                                    ))}
                                 </div>
                             </section>
 
                             {/* Related Tools */}
-                            <section className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Related Tools
                                 </h2>
-                                <div className="grid gap-4 md:grid-cols-3">
-                                    <RelatedToolCard title="Text Formatter" href="/tools/text-formatter" />
-                                    <RelatedToolCard title="Case Converter" href="/tools/case-converter" />
-                                    <RelatedToolCard title="Word Counter" href="/tools/word-counter" />
+                                <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+                                    {relatedTools.map((tool, i) => (
+                                        <Link
+                                            key={i}
+                                            href={tool.href}
+                                            className="p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition font-medium text-gray-900 dark:text-white"
+                                        >
+                                            {tool.title}
+                                        </Link>
+                                    ))}
                                 </div>
                             </section>
-                        </div>
+                        </main>
 
                         {/* Sidebar */}
                         <aside className="lg:col-span-4">
                             <div className="sticky top-4 space-y-6">
-                                <TableOfContents items={tableOfContents} />
-                                <SidebarAd slot="toolPageSidebar" />
+                                <TableOfContents items={tocItems} />
+                                <SidebarAd slot="md-sidebar-1" />
+                                
+                                {/* Quick Tips */}
+                                <div className="p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">💡 Quick Tips</h3>
+                                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                                        <li>• Use # for headings</li>
+                                        <li>• **text** for bold</li>
+                                        <li>• *text* for italic</li>
+                                        <li>• `code` for inline code</li>
+                                        <li>• - or * for bullet lists</li>
+                                    </ul>
+                                </div>
+                                
+                                <SidebarAd slot="md-sidebar-2" />
                             </div>
                         </aside>
                     </div>
@@ -237,81 +263,4 @@ const MarkdownToHtmlPage = () => {
             </div>
         </>
     );
-};
-
-// Helper Components
-const FeatureBox = ({
-    icon,
-    title,
-    description,
-}: {
-    icon: string;
-    title: string;
-    description: string;
-}) => (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition hover:shadow-lg">
-        <div className="mb-2 text-3xl">{icon}</div>
-        <h3 className="mb-2 text-xl font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const StepCard = ({
-    number,
-    title,
-    description,
-}: {
-    number: number;
-    title: string;
-    description: string;
-}) => (
-    <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            {number}
-        </div>
-        <div>
-            <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-            <p className="text-gray-600">{description}</p>
-        </div>
-    </div>
-);
-
-const BenefitItem = ({
-    title,
-    description,
-}: {
-    title: string;
-    description: string;
-}) => (
-    <div className="border-l-4 border-blue-600 pl-4">
-        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const FAQItem = ({
-    question,
-    answer,
-}: {
-    question: string;
-    answer: string;
-}) => (
-    <details className="group rounded-lg border border-gray-200 bg-white p-4">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
-            {question}
-            <span className="transition group-open:rotate-180">▼</span>
-        </summary>
-        <p className="mt-3 text-gray-600">{answer}</p>
-    </details>
-);
-
-const RelatedToolCard = ({ title, href }: { title: string; href: string }) => (
-    <a
-        href={href}
-        className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-600 hover:shadow-md"
-    >
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-    </a>
-);
-
-export default MarkdownToHtmlPage;
+}

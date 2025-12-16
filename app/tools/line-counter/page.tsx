@@ -6,13 +6,10 @@ import ShareButtons from "../../components/shared/ShareButtons";
 import Breadcrumb from "../../components/shared/Breadcrumb";
 import StructuredData from "../../components/seo/StructuredData";
 import { generateToolSchema } from "../../lib/seo";
-import { Metadata } from "next";
+import { metadata } from "./metadata";
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: "Line Counter - Count Text Lines Online",
-};
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },

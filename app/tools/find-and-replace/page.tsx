@@ -1,235 +1,221 @@
+// app/tools/find-and-replace/page.tsx
 import { Metadata } from "next";
 import FindAndReplaceUI from "./_components/FindAndReplaceUI";
-import { generateToolSchema } from "../../lib/seo";
 import TableOfContents from "../../components/shared/TableOfContents";
 import ShareButtons from "../../components/shared/ShareButtons";
 import StructuredData from "../../components/seo/StructuredData";
 import Breadcrumb from "../../components/shared/Breadcrumb";
 import SidebarAd from "../../components/ads/SidebarAd";
 import AdBanner from "../../components/ads/AdBanner";
+import { generateToolSchema, generateFAQSchema } from "../../lib/seo";
+import InArticleAd from "../../components/ads/InArticleAd";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-static";
+export const revalidate = 86400;
+
+const TOOL_NAME = "Find and Replace Tool";
+const TOOL_URL = "/tools/find-and-replace";
+const TOOL_DESCRIPTION = "Search and replace text instantly. Supports bulk replacement, case sensitivity, and whole word matching. Free online text editor tool.";
 
 export const metadata: Metadata = {
-    title: "Find and Replace Text - Online Bulk Replace Tool",
-    description:
-        "Find and replace text across large documents instantly. Supports case-sensitive and whole word matching. Perfect for bulk text editing and document processing.",
+    title: "Find and Replace Text Online - Free Bulk Replacer Tool",
+    description: TOOL_DESCRIPTION,
     keywords: [
-        "find and replace",
-        "search replace",
-        "bulk replace",
-        "text replacer",
-        "find replace online",
+        "find and replace online",
+        "search and replace text",
+        "bulk text replacer",
+        "string replacer",
+        "replace multiple words",
+        "text editor tool",
+        "find replace case sensitive"
     ],
+    alternates: { canonical: TOOL_URL },
     openGraph: {
-        title: "Find and Replace - Free Online Text Replacement Tool",
-        description: "Search and replace text in bulk with our free online tool.",
-        url: "/tools/find-and-replace",
+        title: "Find and Replace - Free Online Bulk Text Tool",
+        description: "Instantly find and replace text in large documents. Fast, secure, and free.",
+        url: TOOL_URL,
         type: "website",
+        images: [
+            {
+                url: "/images/og/find-and-replace.png",
+                width: 1200,
+                height: 630,
+                alt: "Find and Replace Tool Interface",
+            },
+        ],
     },
 };
 
-const FindAndReplacePage = () => {
+const faqs = [
+    {
+        q: "How does 'Replace All' work?",
+        a: "It scans your entire text for every occurrence of your search term and replaces them simultaneously with your specified replacement text."
+    },
+    {
+        q: "Is case sensitivity supported?",
+        a: "Yes! You can toggle 'Case Sensitive' to distinguish between 'Word' and 'word', ensuring you only replace exactly what you intend."
+    },
+    {
+        q: "What does 'Whole Words' mean?",
+        a: "This option ensures you only match complete words. For example, searching for 'cat' won't accidentally match part of 'category' or 'scatter'."
+    },
+    {
+        q: "Is my text data secure?",
+        a: "Absolutely. All processing happens locally in your browser using JavaScript. Your text is never uploaded to any server."
+    }
+];
+
+export default function FindAndReplacePage() {
     const breadcrumbItems = [
         { label: "Home", href: "/" },
         { label: "Tools", href: "/tools" },
-        { label: "Find and Replace", href: "/tools/find-and-replace" },
+        { label: TOOL_NAME, href: TOOL_URL },
     ];
 
-    const tableOfContents = [
-        { id: "tool", title: "Find and Replace Tool" },
-        { id: "features", title: "Features" },
-        { id: "how-to-use", title: "How to Use" },
-        { id: "benefits", title: "Benefits" },
+    const tocItems = [
+        { id: "tool", title: "Find & Replace Tool" },
+        { id: "features", title: "Key Features" },
+        { id: "how-to", title: "How to Use" },
         { id: "faq", title: "FAQ" },
     ];
 
-    const structuredData = generateToolSchema({
-        name: "Find and Replace",
-        description: "Free online find and replace tool for text",
-        url: "/tools/find-and-replace",
+    const toolSchema = generateToolSchema({
+        name: TOOL_NAME,
+        description: TOOL_DESCRIPTION,
+        url: TOOL_URL,
     });
+
+    const faqSchema = generateFAQSchema(faqs.map(f => ({ question: f.q, answer: f.a })));
 
     return (
         <>
-            <StructuredData data={structuredData} />
+            <StructuredData data={toolSchema} />
+            <StructuredData data={faqSchema} />
 
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-8">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <div className="container mx-auto px-4 py-8 max-w-7xl">
                     <Breadcrumb items={breadcrumbItems} />
 
                     <div className="mt-6 grid gap-8 lg:grid-cols-12">
                         {/* Main Content */}
-                        <div className="lg:col-span-8">
-                            <div className="mb-8">
-                                <h1 className="mb-4 text-4xl font-bold text-gray-900">
-                                    Find and Replace Text
+                        <main className="lg:col-span-8">
+                            <header className="mb-8">
+                                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                                    {TOOL_NAME}
                                 </h1>
-                                <p className="text-xl text-gray-600">
-                                    Search and replace text across large documents instantly. Powerful
-                                    find and replace tool with case-sensitive, whole word, and regex
-                                    support for bulk text editing.
+                                <p className="text-lg text-gray-600 dark:text-gray-400">
+                                    Quickly search and replace text in documents, code, or strings. 
+                                    Perfect for bulk editing, correcting typos, or updating content.
                                 </p>
-                                <ShareButtons
-                                    url="/tools/find-and-replace"
-                                    title="Free Find and Replace Tool"
-                                />
-                            </div>
+                                <ShareButtons url={TOOL_URL} title={TOOL_NAME} />
+                            </header>
 
-                            <AdBanner slot="toolPageTop" format="horizontal" />
+                            <AdBanner slot="find-top" format="horizontal" className="mb-8" />
 
-                            <div id="tool" className="my-8">
+                            <section id="tool" className="mb-12">
                                 <FindAndReplaceUI />
-                            </div>
+                            </section>
 
-                            {/* Features */}
-                            <section id="features" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Key Features
+                            <InArticleAd slot="find-middle" className="my-8" />
+
+                            <section id="features" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Powerful Features
                                 </h2>
                                 <div className="grid gap-6 md:grid-cols-2">
-                                    <FeatureBox
-                                        icon="🔍"
-                                        title="Smart Search"
-                                        description="Find all occurrences of text instantly with highlighted matches for easy viewing."
+                                    <FeatureCard 
+                                        icon="🔍" 
+                                        title="Instant Search" 
+                                        desc="See match counts update in real-time as you type." 
                                     />
-                                    <FeatureBox
-                                        icon="🔄"
-                                        title="Bulk Replace"
-                                        description="Replace all occurrences at once or review and replace individually."
+                                    <FeatureCard 
+                                        icon="🔄" 
+                                        title="Bulk Replacement" 
+                                        desc="Update thousands of occurrences in a single click." 
                                     />
-                                    <FeatureBox
-                                        icon="Aa"
-                                        title="Case Sensitive"
-                                        description="Toggle case-sensitive matching to find exact or flexible matches."
+                                    <FeatureCard 
+                                        icon="Aa" 
+                                        title="Case Control" 
+                                        desc="Toggle case sensitivity for precise matching." 
                                     />
-                                    <FeatureBox
-                                        icon="📝"
-                                        title="Whole Word Match"
-                                        description="Find complete words only, avoiding partial matches within larger words."
+                                    <FeatureCard 
+                                        icon="📝" 
+                                        title="Whole Word Mode" 
+                                        desc="Prevent accidental partial matches within other words." 
                                     />
-                                    <FeatureBox
-                                        icon="⚡"
-                                        title="Real-Time Preview"
-                                        description="See matches highlighted in real-time before performing replacements."
+                                    <FeatureCard 
+                                        icon="🔒" 
+                                        title="100% Private" 
+                                        desc="Data stays in your browser. No server uploads." 
                                     />
-                                    <FeatureBox
-                                        icon="🔢"
-                                        title="Match Counter"
-                                        description="View total number of matches found for better text analysis."
+                                    <FeatureCard 
+                                        icon="⚡" 
+                                        title="Fast Processing" 
+                                        desc="Optimized for large texts and code snippets." 
                                     />
                                 </div>
                             </section>
 
-                            {/* How to Use */}
-                            <section id="how-to-use" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="how-to" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     How to Use
                                 </h2>
                                 <div className="space-y-4">
-                                    <StepCard
-                                        number={1}
-                                        title="Enter Your Text"
-                                        description="Paste or type the document or text you want to search through."
-                                    />
-                                    <StepCard
-                                        number={2}
-                                        title="Enter Find Text"
-                                        description="Type the text, word, or phrase you want to find in the 'Find' field."
-                                    />
-                                    <StepCard
-                                        number={3}
-                                        title="Enter Replace Text"
-                                        description="Type what you want to replace it with in the 'Replace' field."
-                                    />
-                                    <StepCard
-                                        number={4}
-                                        title="Replace All or Selectively"
-                                        description="Click 'Replace All' for bulk replacement or review each match individually."
-                                    />
+                                    {[
+                                        "Paste your text into the main content area.",
+                                        "Type the word or phrase you want to find.",
+                                        "Enter the new text you want to replace it with.",
+                                        "Use the checkboxes to enable Case Sensitive or Whole Word matching if needed.",
+                                        "Click 'Replace All' to update your text instantly.",
+                                        "Copy the result to your clipboard."
+                                    ].map((step, i) => (
+                                        <div key={i} className="flex gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                                                {i + 1}
+                                            </div>
+                                            <p className="text-gray-700 dark:text-gray-300 pt-1">{step}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Benefits */}
-                            <section id="benefits" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                                    Benefits
-                                </h2>
-                                <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
-                                    <BenefitItem
-                                        title="Save Time"
-                                        description="Replace hundreds or thousands of occurrences instantly instead of manual editing."
-                                    />
-                                    <BenefitItem
-                                        title="Accurate Editing"
-                                        description="Find every occurrence without missing any, ensuring consistent changes throughout."
-                                    />
-                                    <BenefitItem
-                                        title="Bulk Text Processing"
-                                        description="Perfect for updating product names, URLs, or terminology across large documents."
-                                    />
-                                    <BenefitItem
-                                        title="Error Correction"
-                                        description="Fix repeated spelling mistakes or typos throughout entire documents quickly."
-                                    />
-                                    <BenefitItem
-                                        title="Content Updates"
-                                        description="Update outdated information or branding across multiple text sections at once."
-                                    />
-                                </div>
-                            </section>
+                            <InArticleAd slot="find-bottom" className="my-8" />
 
-                            {/* FAQ */}
-                            <section id="faq" className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section id="faq" className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Frequently Asked Questions
                                 </h2>
                                 <div className="space-y-4">
-                                    <FAQItem
-                                        question="What's the difference between 'Replace' and 'Replace All'?"
-                                        answer="'Replace' replaces only the current highlighted match, letting you review each one. 'Replace All' automatically replaces every match in the entire text at once."
-                                    />
-                                    <FAQItem
-                                        question="How does case-sensitive search work?"
-                                        answer="When enabled, the search distinguishes between uppercase and lowercase. For example, with case-sensitive on, 'Hello' won't match 'hello'. When off, both are treated as the same."
-                                    />
-                                    <FAQItem
-                                        question="What is 'whole word' matching?"
-                                        answer="Whole word matching finds complete words only. For example, searching for 'cat' with whole word enabled won't match 'category' or 'scatter'."
-                                    />
-                                    <FAQItem
-                                        question="Can I undo a replace all action?"
-                                        answer="Yes! Most browsers support Ctrl+Z (or Cmd+Z on Mac) to undo changes. We also keep a backup that you can restore."
-                                    />
-                                    <FAQItem
-                                        question="Does it support regular expressions (regex)?"
-                                        answer="Advanced regex support can be enabled in settings for complex pattern matching and replacement."
-                                    />
-                                    <FAQItem
-                                        question="Is there a limit on text length?"
-                                        answer="You can find and replace in very large documents. The tool handles extensive text efficiently."
-                                    />
+                                    {faqs.map((f, i) => (
+                                        <details key={i} className="group rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                            <summary className="flex cursor-pointer items-center justify-between p-4 font-medium text-gray-900 dark:text-white">
+                                                {f.q}
+                                                <span className="transition-transform group-open:rotate-180">▼</span>
+                                            </summary>
+                                            <p className="px-4 pb-4 text-gray-600 dark:text-gray-400">{f.a}</p>
+                                        </details>
+                                    ))}
                                 </div>
                             </section>
 
-                            {/* Related Tools */}
-                            <section className="my-12">
-                                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                            <section className="mb-12">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                                     Related Tools
                                 </h2>
                                 <div className="grid gap-4 md:grid-cols-3">
-                                    <RelatedToolCard title="Text Formatter" href="/tools/text-formatter" />
-                                    <RelatedToolCard title="Case Converter" href="/tools/case-converter" />
-                                    <RelatedToolCard title="Word Counter" href="/tools/word-counter" />
+                                    <RelatedToolLink title="Word Counter" href="/tools/word-counter" />
+                                    <RelatedToolLink title="Text Case Converter" href="/tools/case-converter" />
+                                    <RelatedToolLink title="Remove Duplicate Lines" href="/tools/remove-duplicate-lines" />
                                 </div>
                             </section>
-                        </div>
+                        </main>
 
                         {/* Sidebar */}
                         <aside className="lg:col-span-4">
                             <div className="sticky top-4 space-y-6">
-                                <TableOfContents items={tableOfContents} />
-                                <SidebarAd slot="toolPageSidebar" />
+                                <TableOfContents items={tocItems} />
+                                <SidebarAd slot="find-sidebar" />
                             </div>
                         </aside>
                     </div>
@@ -237,81 +223,23 @@ const FindAndReplacePage = () => {
             </div>
         </>
     );
-};
+}
 
 // Helper Components
-const FeatureBox = ({
-    icon,
-    title,
-    description,
-}: {
-    icon: string;
-    title: string;
-    description: string;
-}) => (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 transition hover:shadow-lg">
-        <div className="mb-2 text-3xl">{icon}</div>
-        <h3 className="mb-2 text-xl font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const StepCard = ({
-    number,
-    title,
-    description,
-}: {
-    number: number;
-    title: string;
-    description: string;
-}) => (
-    <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            {number}
+function FeatureCard({ icon, title, desc }: { icon: string, title: string, desc: string }) {
+    return (
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm hover:shadow-md transition">
+            <div className="text-3xl mb-3">{icon}</div>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{desc}</p>
         </div>
-        <div>
-            <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-            <p className="text-gray-600">{description}</p>
-        </div>
-    </div>
-);
+    );
+}
 
-const BenefitItem = ({
-    title,
-    description,
-}: {
-    title: string;
-    description: string;
-}) => (
-    <div className="border-l-4 border-blue-600 pl-4">
-        <h3 className="mb-1 font-semibold text-gray-900">{title}</h3>
-        <p className="text-gray-600">{description}</p>
-    </div>
-);
-
-const FAQItem = ({
-    question,
-    answer,
-}: {
-    question: string;
-    answer: string;
-}) => (
-    <details className="group rounded-lg border border-gray-200 bg-white p-4">
-        <summary className="flex cursor-pointer items-center justify-between font-semibold text-gray-900 list-none">
-            {question}
-            <span className="transition group-open:rotate-180">▼</span>
-        </summary>
-        <p className="mt-3 text-gray-600">{answer}</p>
-    </details>
-);
-
-const RelatedToolCard = ({ title, href }: { title: string; href: string }) => (
-    <a
-        href={href}
-        className="block rounded-lg border border-gray-200 bg-white p-4 transition hover:border-blue-600 hover:shadow-md"
-    >
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-    </a>
-);
-
-export default FindAndReplacePage;
+function RelatedToolLink({ title, href }: { title: string, href: string }) {
+    return (
+        <Link href={href} className="block p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-500 transition text-center font-medium text-gray-900 dark:text-white">
+            {title}
+        </Link>
+    );
+}
