@@ -111,7 +111,6 @@ export function generateOrganizationSchema() {
     url: siteConfig.url,
     logo: `${siteConfig.url}/images/logo/logo.png`,
     description: siteConfig.description,
-    sameAs: Object.values(siteConfig.links),
     contactPoint: {
       "@type": "ContactPoint",
       email: siteConfig.author.email,
