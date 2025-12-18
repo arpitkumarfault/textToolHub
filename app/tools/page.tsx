@@ -20,7 +20,7 @@ const ToolsPage = () => {
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-4 text-4xl font-bold text-text-primary md:text-5xl">
-              Free Online Text Tools
+              Free Online Text Tools 📝
             </h1>
             <p className="text-xl text-text-secondary">
               Professional text editing and analysis tools. All free, no
